@@ -31,6 +31,7 @@ describe('Workforce Analytics Dashboard UI/UX Integration Tests', () => {
     expect(screen.getByText(/Recent Workforce Activity/i)).toBeInTheDocument();
     expect(screen.getByText(/Julian Alvarez/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Sarah Chen/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Sridhika/i).length).toBeGreaterThan(0);
   });
 
   it('switches to Error state when Error button is clicked and recovers on Retry', () => {

@@ -400,10 +400,10 @@ export const TopNavbar: React.FC = () => {
           >
             <Box sx={{ px: 2, py: 1.5 }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                Sarah Chen
+                Sridhika
               </Typography>
               <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                sarah.chen@workforceiq.corp
+                sridhika@workforceiq.corp
               </Typography>
             </Box>
             <Divider />

@@ -260,7 +260,7 @@ export const Sidebar: React.FC = () => {
         <Box sx={{ position: 'relative' }}>
           <Avatar
             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
-            alt="Sarah Chen"
+            alt="Sridhika"
             sx={{ width: 36, height: 36, border: `2px solid ${theme.palette.primary.main}` }}
           />
           <FiberManualRecordIcon
@@ -276,7 +276,7 @@ export const Sidebar: React.FC = () => {
         {(sidebarOpen || isMobile) && (
           <Box sx={{ overflow: 'hidden' }}>
             <Typography variant="subtitle2" noWrap sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-              Sarah Chen
+              Sridhika
             </Typography>
             <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block', fontSize: '0.725rem' }}>
               HR Analytics Lead
