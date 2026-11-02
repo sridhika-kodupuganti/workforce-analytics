@@ -95,7 +95,8 @@ export const RecentActivityFeed: React.FC = () => {
     );
   }
 
-  const handleRowClick = (employeeId: string) => {
+  const handleRowClick = (employeeId?: string) => {
+    if (!employeeId) return;
     const emp = employees.find((e) => e.id === employeeId);
     if (emp) {
       setSelectedEmployee(emp);

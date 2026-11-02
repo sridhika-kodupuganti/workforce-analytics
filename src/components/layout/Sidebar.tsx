@@ -39,19 +39,21 @@ interface NavItem {
   badgeColor?: 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, badge: 'Live', badgeColor: 'success' },
-  { id: 'employees', label: 'Workforce Directory', icon: <PeopleAltIcon fontSize="small" />, badge: '340' },
-  { id: 'attendance', label: 'Attendance & Logs', icon: <AccessTimeFilledIcon fontSize="small" /> },
-  { id: 'departments', label: 'Departments', icon: <DomainIcon fontSize="small" /> },
-  { id: 'analytics', label: 'Advanced Analytics', icon: <InsightsIcon fontSize="small" /> },
-  { id: 'settings', label: 'Platform Settings', icon: <SettingsIcon fontSize="small" /> },
-];
+
 
 export const Sidebar: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { sidebarOpen, setSidebarOpen, activeNav, setActiveNav, toggleSidebar } = useWorkforce();
+  const { sidebarOpen, setSidebarOpen, activeNav, setActiveNav, toggleSidebar, employees } = useWorkforce();
+
+  const navItems: NavItem[] = React.useMemo(() => [
+    { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, badge: 'Live', badgeColor: 'success' },
+    { id: 'employees', label: 'Workforce Directory', icon: <PeopleAltIcon fontSize="small" />, badge: String(employees.length || 60) },
+    { id: 'attendance', label: 'Attendance & Logs', icon: <AccessTimeFilledIcon fontSize="small" /> },
+    { id: 'departments', label: 'Departments', icon: <DomainIcon fontSize="small" /> },
+    { id: 'analytics', label: 'Advanced Analytics', icon: <InsightsIcon fontSize="small" /> },
+    { id: 'settings', label: 'Platform Settings', icon: <SettingsIcon fontSize="small" /> },
+  ], [employees.length]);
 
   const handleNavClick = (id: string) => {
     setActiveNav(id);
@@ -149,7 +151,7 @@ export const Sidebar: React.FC = () => {
         </Typography>
 
         <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.6 }}>
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const isActive = activeNav === item.id;
             const buttonContent = (
               <ListItemButton

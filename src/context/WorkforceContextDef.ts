@@ -7,6 +7,7 @@ import type {
   KpiMetric,
   DepartmentMetric,
   AttendanceTrendPoint,
+  WorkforceDistributionItem,
 } from '../types/workforce.ts';
 
 export interface WorkforceContextType {
@@ -17,6 +18,8 @@ export interface WorkforceContextType {
   viewState: DashboardViewState;
   setViewState: (state: DashboardViewState) => void;
   simulateState: (state: DashboardViewState) => void;
+
+  backendStatus: 'connected' | 'offline' | 'loading';
 
   sidebarOpen: boolean;
   toggleSidebar: () => void;
@@ -36,6 +39,7 @@ export interface WorkforceContextType {
   filteredActivities: ActivityItem[];
   trendData: AttendanceTrendPoint[];
   departmentMetrics: DepartmentMetric[];
+  distributionData: WorkforceDistributionItem[];
 
   kpis: Record<string, KpiMetric>;
 
@@ -46,6 +50,7 @@ export interface WorkforceContextType {
   setIsExportOpen: (open: boolean) => void;
 
   refreshData: () => void;
+  updateStatus: (id: string, status: string) => Promise<void>;
 }
 
 export const WorkforceContext = createContext<WorkforceContextType | undefined>(undefined);

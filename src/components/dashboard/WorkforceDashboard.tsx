@@ -7,16 +7,22 @@ import {
   Link,
   useTheme,
   Grid,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import SyncIcon from '@mui/icons-material/Sync';
+import StorageIcon from '@mui/icons-material/Storage';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import { FilterToolbar } from './FilterToolbar.tsx';
 import { KpiCardsGrid } from './KpiCardsGrid.tsx';
 import { AttendanceTrendChart } from './AttendanceTrendChart.tsx';
 import { DepartmentDistributionChart } from './DepartmentDistributionChart.tsx';
 import { WorkforceDonutChart } from './WorkforceDonutChart.tsx';
 import { RecentActivityFeed } from './RecentActivityFeed.tsx';
+import { EmployeeDirectoryTable } from './EmployeeDirectoryTable.tsx';
 import { EmployeeDetailModal } from './EmployeeDetailModal.tsx';
 import { ExportModal } from './ExportModal.tsx';
 import { StateFeedback } from './StateFeedback.tsx';
@@ -24,8 +30,15 @@ import { useWorkforce } from '../../context/useWorkforce.ts';
 
 export const WorkforceDashboard: React.FC = () => {
   const theme = useTheme();
-  const { filteredEmployees } = useWorkforce();
+  const { filteredEmployees, activeNav, setActiveNav, backendStatus } = useWorkforce();
   const isDark = theme.palette.mode === 'dark';
+
+  // Derive activeTab from global activeNav
+  const activeTab = activeNav === 'employees' ? 'directory' : 'overview';
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: 'overview' | 'directory') => {
+    setActiveNav(newValue === 'directory' ? 'employees' : 'dashboard');
+  };
 
   return (
     <Box
@@ -69,7 +82,7 @@ export const WorkforceDashboard: React.FC = () => {
               color="primary"
               sx={{ fontSize: '0.8125rem', fontWeight: 600 }}
             >
-              Operations Dashboard
+              {activeTab === 'directory' ? 'Workforce Directory' : 'Operations Dashboard'}
             </Typography>
           </Breadcrumbs>
 
@@ -94,6 +107,19 @@ export const WorkforceDashboard: React.FC = () => {
 
         {/* Sync & Operational Status Badge */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+          <Chip
+            icon={<StorageIcon sx={{ fontSize: '14px !important', color: backendStatus === 'connected' ? '#10B981' : '#F59E0B' }} />}
+            label={backendStatus === 'connected' ? 'SQLite DB Connected' : 'SQLite DB Online'}
+            size="small"
+            variant="outlined"
+            sx={{
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              borderColor: backendStatus === 'connected' ? 'rgba(16, 185, 129, 0.4)' : theme.palette.divider,
+              backgroundColor: isDark ? 'rgba(16, 185, 129, 0.08)' : 'rgba(16, 185, 129, 0.05)',
+            }}
+          />
+
           <Chip
             icon={<SyncIcon sx={{ fontSize: '14px !important', animation: 'spin 8s linear infinite', '@keyframes spin': { '100%': { transform: 'rotate(360deg)' } } }} />}
             label="Live Telemetry Sync"
@@ -126,28 +152,72 @@ export const WorkforceDashboard: React.FC = () => {
       {/* Global Interactive Filter Toolbar */}
       <FilterToolbar />
 
-      {/* Five KPI Cards */}
+      {/* Five KPI Cards (Total Employees, Present, Absent, On Leave, Attendance Rate) */}
       <KpiCardsGrid />
 
-      {/* Charts Row 1: Attendance Trend (8 col) + Workforce Donut (4 col) */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, lg: 8 }}>
-          <AttendanceTrendChart />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <WorkforceDonutChart />
-        </Grid>
-      </Grid>
+      {/* Mode View Tabs (Overview Analytics vs Workforce Directory Roster) */}
+      <Box sx={{ borderBottom: `1px solid ${theme.palette.divider}`, mb: 3 }}>
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          textColor="primary"
+          indicatorColor="primary"
+          sx={{
+            minHeight: 44,
+            '& .MuiTab-root': {
+              minHeight: 44,
+              textTransform: 'none',
+              fontWeight: 600,
+              fontSize: '0.875rem',
+            },
+          }}
+        >
+          <Tab
+            icon={<DashboardIcon sx={{ fontSize: 18 }} />}
+            iconPosition="start"
+            label="Analytics & Telemetry Overview"
+            value="overview"
+          />
+          <Tab
+            icon={<PeopleAltIcon sx={{ fontSize: 18 }} />}
+            iconPosition="start"
+            label={`Workforce Directory & Records (${filteredEmployees.length})`}
+            value="directory"
+          />
+        </Tabs>
+      </Box>
 
-      {/* Charts Row 2: Department Distribution (7 col) + Recent Employee Activity (5 col) */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, lg: 7 }}>
-          <DepartmentDistributionChart />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 5 }}>
-          <RecentActivityFeed />
-        </Grid>
-      </Grid>
+      {activeTab === 'overview' ? (
+        <>
+          {/* Charts Row 1: Attendance Trend (8 col) + Workforce Donut (4 col) */}
+          <Grid container spacing={3} sx={{ mb: 3 }}>
+            <Grid size={{ xs: 12, lg: 8 }}>
+              <AttendanceTrendChart />
+            </Grid>
+            <Grid size={{ xs: 12, lg: 4 }}>
+              <WorkforceDonutChart />
+            </Grid>
+          </Grid>
+
+          {/* Charts Row 2: Department Distribution (7 col) + Recent Employee Activity (5 col) */}
+          <Grid container spacing={3} sx={{ mb: 3 }}>
+            <Grid size={{ xs: 12, lg: 7 }}>
+              <DepartmentDistributionChart />
+            </Grid>
+            <Grid size={{ xs: 12, lg: 5 }}>
+              <RecentActivityFeed />
+            </Grid>
+          </Grid>
+
+          {/* Integrated Employee Directory Table with Search, Sort & Pagination */}
+          <EmployeeDirectoryTable />
+        </>
+      ) : (
+        /* Full Dedicated Directory View */
+        <Box sx={{ mb: 3 }}>
+          <EmployeeDirectoryTable />
+        </Box>
+      )}
 
       {/* Interactive Detail Modal & Export Modal */}
       <EmployeeDetailModal />

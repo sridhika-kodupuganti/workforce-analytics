@@ -1,10 +1,13 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import type {
   Employee,
   ActivityItem,
   DashboardFilters,
   DashboardViewState,
   KpiMetric,
+  DepartmentMetric,
+  AttendanceTrendPoint,
+  WorkforceDistributionItem,
 } from '../types/workforce.ts';
 import {
   INITIAL_EMPLOYEES,
@@ -15,6 +18,7 @@ import {
   filterEmployees,
   filterActivities,
 } from '../data/mockData.ts';
+import { workforceApi } from '../services/api.ts';
 import { WorkforceContext } from './WorkforceContextDef.ts';
 
 const DEFAULT_FILTERS: DashboardFilters = {
@@ -63,6 +67,9 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const toggleSidebar = useCallback(() => setSidebarOpen((prev) => !prev), []);
   const [activeNav, setActiveNav] = useState<string>('dashboard');
 
+  // Backend connection status
+  const [backendStatus, setBackendStatus] = useState<'connected' | 'offline' | 'loading'>('loading');
+
   // Dashboard view state (normal, loading, empty, error)
   const [viewState, setViewState] = useState<DashboardViewState>('normal');
 
@@ -87,11 +94,84 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return count;
   }, [filters]);
 
-  // Master Data
-  const [employees] = useState<Employee[]>(INITIAL_EMPLOYEES);
-  const [activities] = useState<ActivityItem[]>(MOCK_ACTIVITIES);
+  // Master Data state (populated from SQLite REST API)
+  const [employees, setEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
+  const [activities, setActivities] = useState<ActivityItem[]>(MOCK_ACTIVITIES);
+  const [trendData, setTrendData] = useState<AttendanceTrendPoint[]>(MOCK_TREND_DATA_30D);
+  const [departmentMetrics, setDepartmentMetrics] = useState<DepartmentMetric[]>(MOCK_DEPARTMENT_METRICS);
+  const [distributionData, setDistributionData] = useState<WorkforceDistributionItem[]>([]);
+  const [kpis, setKpis] = useState<Record<string, KpiMetric>>(BASE_KPIS);
 
-  // Filtered Data
+  // Selected employee for detailed modal
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+
+  // Export Modal state
+  const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
+
+  // Initial load & when filters change
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchData() {
+      try {
+        const health = await workforceApi.getHealth();
+        if (!isMounted) return;
+        setBackendStatus(health.status === 'healthy' ? 'connected' : 'offline');
+
+        const [kpiRes, empRes, trendRes, deptRes, actRes, distRes] = await Promise.all([
+          workforceApi.getKpis(filters),
+          workforceApi.getEmployees(filters, { page: 1, limit: 100, sortBy: 'name', sortOrder: 'asc' }),
+          workforceApi.getTrend(filters.dateRange, filters),
+          workforceApi.getDepartmentMetrics(filters),
+          workforceApi.getActivities(20, 0, filters),
+          workforceApi.getDistribution('work_model', filters),
+        ]);
+
+        if (!isMounted) return;
+        if (kpiRes) setKpis(kpiRes);
+        if (empRes?.employees?.length) setEmployees(empRes.employees);
+        if (trendRes?.length) setTrendData(trendRes);
+        if (deptRes?.length) setDepartmentMetrics(deptRes);
+        if (actRes?.activities?.length) setActivities(actRes.activities);
+        if (distRes?.length) setDistributionData(distRes);
+      } catch (err) {
+        if (!isMounted) return;
+        console.warn('API sync warning, falling back to local dataset:', err);
+        setBackendStatus('offline');
+      }
+    }
+
+    void fetchData();
+    return () => {
+      isMounted = false;
+    };
+  }, [filters]);
+
+  // Refresh data action
+  const refreshData = useCallback(async () => {
+    setViewState('loading');
+    try {
+      const [kpiRes, empRes, trendRes, deptRes, actRes, distRes] = await Promise.all([
+        workforceApi.getKpis(filters),
+        workforceApi.getEmployees(filters, { page: 1, limit: 100, sortBy: 'name', sortOrder: 'asc' }),
+        workforceApi.getTrend(filters.dateRange, filters),
+        workforceApi.getDepartmentMetrics(filters),
+        workforceApi.getActivities(20, 0, filters),
+        workforceApi.getDistribution('work_model', filters),
+      ]);
+      if (kpiRes) setKpis(kpiRes);
+      if (empRes?.employees?.length) setEmployees(empRes.employees);
+      if (trendRes?.length) setTrendData(trendRes);
+      if (deptRes?.length) setDepartmentMetrics(deptRes);
+      if (actRes?.activities?.length) setActivities(actRes.activities);
+      if (distRes?.length) setDistributionData(distRes);
+      setViewState('normal');
+    } catch {
+      setViewState('normal');
+    }
+  }, [filters]);
+
+  // Filtered employees for display
   const filteredEmployees = useMemo(() => {
     if (viewState === 'empty') return [];
     return filterEmployees(employees, filters);
@@ -102,126 +182,34 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return filterActivities(activities, filters);
   }, [activities, filters, viewState]);
 
-  // Trend data adapted to dateRange
-  const trendData = useMemo(() => {
-    if (viewState === 'empty') return [];
-    const count =
-      filters.dateRange === '7d' ? 7 : filters.dateRange === '14d' ? 14 : MOCK_TREND_DATA_30D.length;
-    return MOCK_TREND_DATA_30D.slice(-count);
-  }, [filters.dateRange, viewState]);
-
-  // Department metrics filtered or adjusted
-  const departmentMetrics = useMemo(() => {
-    if (viewState === 'empty') return [];
-    if (filters.department !== 'All') {
-      return MOCK_DEPARTMENT_METRICS.filter((dm) => dm.department === filters.department);
-    }
-    return MOCK_DEPARTMENT_METRICS;
-  }, [filters.department, viewState]);
-
-  // Dynamically compute KPIs
-  const kpis: Record<string, KpiMetric> = useMemo(() => {
-    if (viewState === 'empty') {
-      return {
-        totalWorkforce: { ...BASE_KPIS.totalWorkforce, value: 0, subtitle: 'No matching records' },
-        attendanceRate: { ...BASE_KPIS.attendanceRate, value: '0%', subtitle: 'No active data' },
-        presentToday: { ...BASE_KPIS.presentToday, value: 0, subtitle: '0 On-site · 0 Remote' },
-        onLeave: { ...BASE_KPIS.onLeave, value: 0, subtitle: '0 Planned · 0 Sick' },
-        overtimeHours: { ...BASE_KPIS.overtimeHours, value: '0 hrs', subtitle: '0 hours recorded' },
-      };
-    }
-
-    const totalFiltered = filteredEmployees.length;
-    const presentCount = filteredEmployees.filter(
-      (e) => e.status === 'Present' || e.status === 'Overtime',
-    ).length;
-    const remoteCount = filteredEmployees.filter((e) => e.status === 'Remote').length;
-    const leaveCount = filteredEmployees.filter((e) => e.status === 'On Leave').length;
-    const totalActive = presentCount + remoteCount;
-    const rate = totalFiltered > 0 ? ((totalActive / totalFiltered) * 100).toFixed(1) : '96.5';
-
-    // If filters are standard default, use baseline KPIs for full company metrics
-    if (activeFilterCount === 0) {
-      return BASE_KPIS;
-    }
-
-    return {
-      totalWorkforce: {
-        title: 'Filtered Workforce',
-        value: totalFiltered,
-        delta: 3.2,
-        deltaPeriod: 'current filter',
-        trend: 'up' as const,
-        isPositive: true,
-        subtitle: `${totalFiltered} total matching records`,
-        sparklineData: [Math.max(1, totalFiltered - 4), Math.max(1, totalFiltered - 2), totalFiltered],
-        unit: 'employees',
-      },
-      attendanceRate: {
-        title: 'Attendance Rate',
-        value: `${rate}%`,
-        delta: Number(rate) >= 95 ? 1.5 : -1.8,
-        deltaPeriod: 'in filtered subset',
-        trend: (Number(rate) >= 95 ? 'up' : 'down') as 'up' | 'down',
-        isPositive: Number(rate) >= 95,
-        subtitle: `${totalActive} active · ${leaveCount} on leave`,
-        sparklineData: [92.0, 94.5, Number(rate)],
-        progressValue: Number(rate),
-      },
-      presentToday: {
-        title: 'Present Today',
-        value: presentCount,
-        delta: 2.1,
-        deltaPeriod: 'on-site badge-in',
-        trend: 'up' as const,
-        isPositive: true,
-        subtitle: `${presentCount} on-site · ${remoteCount} remote`,
-        sparklineData: [Math.max(0, presentCount - 3), presentCount],
-        progressValue: totalFiltered > 0 ? Math.round((presentCount / totalFiltered) * 100) : 0,
-      },
-      onLeave: {
-        title: 'On Leave / Absent',
-        value: leaveCount,
-        delta: -4.5,
-        deltaPeriod: 'vs avg',
-        trend: 'down' as const,
-        isPositive: true,
-        subtitle: `${leaveCount} marked absent/leave`,
-        sparklineData: [leaveCount + 2, leaveCount + 1, leaveCount],
-        progressValue: totalFiltered > 0 ? Math.round((leaveCount / totalFiltered) * 100) : 0,
-      },
-      overtimeHours: {
-        title: 'Overtime Logged',
-        value: `${filteredEmployees.reduce((acc, curr) => acc + curr.overtimeHoursThisMonth, 0).toFixed(0)} hrs`,
-        delta: 4.8,
-        deltaPeriod: 'total in selection',
-        trend: 'up' as const,
-        isPositive: false,
-        subtitle: 'Filtered overtime load',
-        sparklineData: [30, 45, 60],
-        unit: 'hours',
-      },
-    };
-  }, [filteredEmployees, activeFilterCount, viewState]);
-
-  // Selected employee for detailed modal
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-
-  // Export Modal state
-  const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
-
   // State simulator helper
   const simulateState = useCallback((state: DashboardViewState) => {
     setViewState(state);
+    if (state === 'empty') {
+      setKpis({
+        totalWorkforce: { ...BASE_KPIS.totalWorkforce, value: 0, subtitle: 'No matching records' },
+        totalEmployees: { ...BASE_KPIS.totalWorkforce, title: 'Total Employees', value: 0, subtitle: 'No matching records' },
+        attendanceRate: { ...BASE_KPIS.attendanceRate, value: '0%', subtitle: 'No active data' },
+        presentToday: { ...BASE_KPIS.presentToday, value: 0, subtitle: '0 On-site · 0 Remote' },
+        present: { ...BASE_KPIS.presentToday, title: 'Present Today', value: 0, subtitle: '0 On-site · 0 Remote' },
+        absent: { ...BASE_KPIS.onLeave, title: 'Absent', value: 0, subtitle: '0 Unexcused' },
+        onLeave: { ...BASE_KPIS.onLeave, value: 0, subtitle: '0 Planned · 0 Sick' },
+        overtimeHours: { ...BASE_KPIS.overtimeHours, value: '0 hrs', subtitle: '0 hours recorded' },
+      });
+    }
   }, []);
 
-  // Refresh data simulation
-  const refreshData = useCallback(() => {
-    setViewState('loading');
-    setTimeout(() => {
-      setViewState('normal');
-    }, 700);
-  }, []);
+  // Update employee status (e.g. clock-in / mark absent) via SQLite API
+  const updateStatus = useCallback(async (id: string, status: string) => {
+    const success = await workforceApi.updateEmployeeStatus(id, status);
+    if (success) {
+      // Optimistic update
+      setEmployees((prev) =>
+        prev.map((emp) => (emp.id === id ? { ...emp, status: status as any } : emp)),
+      );
+      void refreshData();
+    }
+  }, [refreshData]);
 
   return (
     <WorkforceContext.Provider
@@ -232,6 +220,7 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         viewState,
         setViewState,
         simulateState,
+        backendStatus,
         sidebarOpen,
         toggleSidebar,
         setSidebarOpen,
@@ -247,12 +236,14 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         filteredActivities,
         trendData,
         departmentMetrics,
+        distributionData,
         kpis,
         selectedEmployee,
         setSelectedEmployee,
         isExportOpen,
         setIsExportOpen,
         refreshData,
+        updateStatus,
       }}
     >
       {children}

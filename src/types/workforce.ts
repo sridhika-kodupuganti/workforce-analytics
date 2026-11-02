@@ -22,6 +22,7 @@ export type AttendanceStatus =
   | 'Present'
   | 'Remote'
   | 'On Leave'
+  | 'Absent'
   | 'Half-Day'
   | 'Overtime';
 
@@ -45,11 +46,12 @@ export interface Employee {
   overtimeHoursThisMonth: number;
   leaveType?: 'Annual' | 'Sick' | 'Parental' | 'Casual' | 'Unpaid';
   joinDate: string;
+  phone?: string;
 }
 
 export interface ActivityItem {
   id: string;
-  employeeId: string;
+  employeeId?: string;
   employeeName: string;
   avatar: string;
   department: string;
@@ -61,7 +63,8 @@ export interface ActivityItem {
     | 'Leave Requested'
     | 'Remote Check-in'
     | 'Overtime Logged'
-    | 'Shift Swapped';
+    | 'Shift Swapped'
+    | 'Absent Reported';
   timestamp: string;
   status: 'Completed' | 'Pending' | 'Flagged' | 'Approved';
   details: string;
@@ -72,6 +75,7 @@ export interface AttendanceTrendPoint {
   fullDate: string;
   present: number;
   remote: number;
+  absent?: number;
   onLeave: number;
   total: number;
   attendanceRate: number;
@@ -82,6 +86,7 @@ export interface DepartmentMetric {
   headcount: number;
   presentCount: number;
   remoteCount: number;
+  absentCount?: number;
   onLeaveCount: number;
   attendanceRate: number;
   avgHours: number;
@@ -119,3 +124,22 @@ export interface KpiMetric {
 }
 
 export type DashboardViewState = 'normal' | 'loading' | 'empty' | 'error';
+
+export type EmployeeSortField =
+  | 'name'
+  | 'role'
+  | 'department'
+  | 'location'
+  | 'status'
+  | 'hoursWorkedToday'
+  | 'overtimeHoursThisMonth'
+  | 'joinDate';
+
+export type SortOrder = 'asc' | 'desc';
+
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}

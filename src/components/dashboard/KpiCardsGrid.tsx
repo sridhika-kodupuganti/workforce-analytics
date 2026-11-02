@@ -17,6 +17,7 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import MoreTimeIcon from '@mui/icons-material/MoreTime';
+import PersonOffIcon from '@mui/icons-material/PersonOff';
 import { useWorkforce } from '../../context/useWorkforce.ts';
 import type { KpiMetric } from '../../types/workforce.ts';
 
@@ -66,7 +67,7 @@ export const KpiCardsGrid: React.FC = () => {
   }> = [
     {
       key: 'totalWorkforce',
-      metric: kpis.totalWorkforce,
+      metric: kpis.totalWorkforce || kpis.totalEmployees,
       icon: <GroupsIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
         ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(79, 70, 229, 0.05) 100%)'
@@ -84,12 +85,31 @@ export const KpiCardsGrid: React.FC = () => {
     },
     {
       key: 'presentToday',
-      metric: kpis.presentToday,
+      metric: kpis.presentToday || kpis.present,
       icon: <MeetingRoomIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
         ? 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(2, 132, 199, 0.05) 100%)'
         : 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
       accentColor: '#0EA5E9',
+    },
+    {
+      key: 'absent',
+      metric: kpis.absent || {
+        title: 'Absent',
+        value: 3,
+        delta: -1.2,
+        deltaPeriod: 'unexcused absences',
+        trend: 'down',
+        isPositive: true,
+        subtitle: '3 unexcused · immediate alert',
+        sparklineData: [6, 4, 3],
+        progressValue: 5,
+      },
+      icon: <PersonOffIcon sx={{ fontSize: 22 }} />,
+      gradient: isDark
+        ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%)'
+        : 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
+      accentColor: '#EF4444',
     },
     {
       key: 'onLeave',
@@ -105,9 +125,9 @@ export const KpiCardsGrid: React.FC = () => {
       metric: kpis.overtimeHours,
       icon: <MoreTimeIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
-        ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%)'
-        : 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
-      accentColor: '#EF4444',
+        ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(124, 58, 237, 0.05) 100%)'
+        : 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
+      accentColor: '#8B5CF6',
     },
   ];
 
@@ -120,13 +140,14 @@ export const KpiCardsGrid: React.FC = () => {
             xs: '1fr',
             sm: 'repeat(2, 1fr)',
             md: 'repeat(3, 1fr)',
-            lg: 'repeat(5, 1fr)',
+            lg: 'repeat(3, 1fr)',
+            xl: 'repeat(6, 1fr)',
           },
           gap: 2,
           mb: 3,
         }}
       >
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: 6 }).map((_, i) => (
           <Card key={i} sx={{ p: 2, borderRadius: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
               <Skeleton variant="text" width="60%" height={24} />
@@ -149,7 +170,8 @@ export const KpiCardsGrid: React.FC = () => {
           xs: '1fr',
           sm: 'repeat(2, 1fr)',
           md: 'repeat(3, 1fr)',
-          lg: 'repeat(5, 1fr)',
+          lg: 'repeat(3, 1fr)',
+          xl: 'repeat(6, 1fr)',
         },
         gap: 2,
         mb: 3,

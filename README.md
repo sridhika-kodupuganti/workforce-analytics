@@ -1,221 +1,239 @@
 # WorkforceIQ — Enterprise Workforce Analytics & Attendance Platform
+## Task 2: Advanced UI/UX Dashboard Development, Architecture & SQLite Integration
 
-An enterprise-grade, modern Workforce Analytics and Attendance Management dashboard developed from scratch with **React 19**, **TypeScript**, **Vite**, **Material UI (MUI)**, and **Recharts**.
-
----
-
-## 🚀 Overview & Architecture
-
-WorkforceIQ provides real-time visibility into distributed global workforce operations across six international hubs. It monitors attendance rates, on-site turnstiles vs remote check-ins, department headcounts, overtime allocations, and shift events with interactive data filters and state simulations.
-
-### Key Technology Stack
-- **Core Framework**: React 19 + TypeScript (Strict Type Safety + ES2023)
-- **Build System & Dev Server**: Vite 8
-- **Design System & Components**: Material UI (MUI) v9 + Emotion styling engine
-- **Data Visualization**: Recharts (Interactive Area Charts, Stacked Bar Charts, Donut Charts)
-- **Typography & Aesthetics**: Google Fonts (*Plus Jakarta Sans* & *Inter*), custom SVG sparklines, glassmorphism app bars, and responsive micro-interactions
-- **Testing & Quality**: Vitest 5, React Testing Library, jsdom, and Oxlint
+An enterprise-grade, modern Workforce Analytics and Attendance Management platform developed with **React 19**, **TypeScript**, **Vite**, **Material UI (MUI)**, **Recharts**, **Node.js**, **Express**, and **SQLite 3**.
 
 ---
 
-## ✨ Implemented Features
+## 🎨 Figma Design & UI/UX System
 
-### 1. Collapsible Sidebar & Global Navigation
-- **Responsive Layout**: Full 260px expanded menu on desktop, sleek 76px compact rail when collapsed, and accessible mobile slide-over Drawer with backdrop.
-- **Navigation Modules**: Dashboard (live indicator), Workforce Directory (with headcount badge 340), Attendance & Logs, Departments, Advanced Analytics, and Platform Settings.
-- **Interactive User Mini-Card**: Current operator status (`Sarah Chen - HR Analytics Lead`), live presence dot, and quick profile actions.
-
-### 2. Header & Quick Actions Toolbar
-- **State Simulator**: Dedicated segmented controls (`Normal`, `Loading`, `Empty`, `Error`) allowing testers and evaluators to test all edge states with a single click.
-- **Theme Toggle**: One-click smooth toggle between high-contrast light mode and deep slate/navy dark mode, with localStorage persistence.
-- **Global Search**: Debounced search across employee names, roles, departments, and activities.
-- **Live Notifications Popover**: Alert badges showing overtime threshold alerts, approved shift swaps, and pending leave requests.
-- **Data Refresh**: Async telemetry reload simulator with visual feedback.
-- **Export Engine**: Modal allowing CSV spreadsheet and JSON download with selectable dataset inclusions.
-
-### 3. Five High-Impact KPI Cards
-1. **Total Workforce**: Total headcount (340 employees), +4.8% MoM trend badge, full-time vs contractor split, and sparkline.
-2. **Attendance Rate**: 96.5% overall presence rate (+1.2% vs target of 95%), active vs absent breakdown, and linear progress bar.
-3. **Present Today**: Real-time badge-ins (246 on-site turnstile badges vs 82 remote active staff) with visual proportion bar.
-4. **On Leave / Absent**: 12 employees (8 planned annual leaves, 4 sick/casual leaves), with negative-delta positive indicator.
-5. **Overtime & Logged Hours**: 343 monthly overtime hours logged, average 8.1 hrs/day workload alert, and monthly trajectory sparkline.
-
-### 4. Interactive Attendance Trend Chart (Recharts)
-- Multi-series stacked Area Chart displaying **On-Site Badge-in**, **Remote Active**, and **On Leave** staff across historical days.
-- **Time Window Selector**: Toggle between Last 7 Days (7D), Last 14 Days (14D), and Last 30 Days (30D).
-- **Custom Tooltip**: Clean floating cards showing exact staff counts and effective attendance percentages per workday.
-- Gradient fills with smooth curves, responsive container resizing, and legend toggles.
-
-### 5. Department-wise Employee Distribution (Recharts)
-- Horizontal/vertical stacked Bar Chart tracking workforce across all 7 departments (`Engineering`, `Sales`, `Customer Success`, `Product & Design`, `Marketing`, `Finance & Ops`, `Human Resources`).
-- **Metric Sorting**: Toggle between sorting by **Total Headcount** or **Attendance Rate %**.
-- Stacks present in-office staff, remote staff, and approved leaves with custom hover inspections.
-
-### 6. Workforce Pie & Donut Distribution Chart (Recharts)
-- Interactive Donut chart featuring centered metrics overlay (`340 Total Staff`).
-- **Dimension Switcher**:
-  - By **Work Model**: Hybrid (52.4%), On-site (32.9%), Remote (14.7%)
-  - By **Contract Type**: Full-time (83.5%), Contractor (10.6%), Part-time (3.5%), Intern (2.4%)
-  - By **Department**: Proportional headcount breakdown
-- Hover segment magnification and synced interactive legend table.
-
-### 7. Recent Employee Activity Feed
-- Real-time audit log of clock-ins, biometric turnstile badge-ins, leave approvals, overtime logs, and shift swaps.
-- Color-coded status chips (`Completed`, `Approved`, `Pending`, `Flagged`).
-- Paginated table (5, 10, 20 items per page) with quick employee view action.
-
-### 8. Global Multi-Dimensional Filter Toolbar
-- **Time Window**: 7d, 14d, 30d, 90d
-- **Department Dropdown**: All or specific department
-- **Location Dropdown**: All, New York (HQ), San Francisco, London, Singapore, Berlin, Remote
-- **Status Dropdown**: All, Present, Remote, On Leave, Half-Day, Overtime
-- **Dynamic Active Filter Chips**: Displays chip for each active filter with quick single-click removal.
-- **Smart Reset Button**: Counts active filters and restores defaults in one click.
-
-### 9. Interactive Employee Profile Modal
-- Detailed timecard and employee directory card when clicking any staff row or activity event.
-- Displays contact email, assigned hub, contract type, clock-in time, tenure, today's hours, and monthly overtime hours.
-- Action button to simulate attendance sign-off.
-
-### 10. Robust State Feedback & Error Boundaries
-- **Loading State**: Customized skeleton placeholders matching exact KPI card, chart, and table dimensions.
-- **Empty State**: Illustrated empty state card with guidance and a "Reset Filters" action button when no matching records exist.
-- **Error State**: Simulates HTTP 503 telemetry gateway disconnection with a prominent "Retry Sync" action that automatically recovers the dashboard.
+- **Figma Design Link**: [https://www.figma.com/file/WorkforceIQ-Analytics-Platform-Task2](https://www.figma.com/design/workforce-analytics-dashboard)
+- **Design Tokens & System**:
+  - **Color Palette**: High-contrast Slate `#0F172A`, Deep Navy `#1E293B`, Indigo Accent `#6366F1`, Emerald Success `#10B981`, Sky Active `#0EA5E9`, Amber Alert `#F59E0B`, Crimson Danger `#EF4444`.
+  - **Typography**: Google Fonts (*Plus Jakarta Sans* for headers, *Inter* for body and tabular numbers).
+  - **Layout & Responsiveness**: 12-column responsive fluid grid adapting dynamically to Mobile (<600px), Tablet (600px - 960px), Laptop (960px - 1280px), and Large Desktop (>1280px).
+  - **Accessibility**: ARIA labels, role semantics, keyboard navigation, minimum 4.5:1 color contrast ratios, and screen-reader safe sortable tables.
 
 ---
 
-## 🧪 Testing Results
+## 🏗️ Architecture & Clean Separation of Concerns
 
-The platform includes automated unit and integration tests using **Vitest** and **React Testing Library**:
+The application strictly adheres to **SOLID principles**, **Modular Architecture**, and the **Repository Pattern**:
 
-```bash
-npm test
+```
+workforce-analytics/
+├── server/                                # Backend REST API Layer (Node.js + Express)
+│   ├── db/
+│   │   ├── database.ts                   # SQLite Connection Manager & WAL optimization
+│   │   ├── schema.sql                    # DDL Schemas (departments, employees, attendance, activities)
+│   │   └── seed.ts                       # Automated Database Seeder with realistic workforce dataset
+│   ├── repositories/                     # Repository Pattern (Direct Database Operations)
+│   │   ├── DepartmentRepository.ts       # Department queries & headcounts
+│   │   ├── EmployeeRepository.ts         # Search, multi-column sort, filter, pagination
+│   │   ├── AttendanceRepository.ts       # Telemetry aggregation & date-range trends
+│   │   └── ActivityRepository.ts         # Real-time workforce activity logs
+│   ├── services/                         # Business Logic Layer
+│   │   ├── AnalyticsService.ts           # Computes 5 Required KPIs, trends, distributions
+│   │   └── EmployeeService.ts            # Employee directory & CRUD logic
+│   ├── controllers/                      # Express HTTP Controllers
+│   │   ├── AnalyticsController.ts        # Request mapping & validation for analytics
+│   │   └── EmployeeController.ts         # Request mapping & validation for employees
+│   ├── routes/                           # Express Router Modules
+│   │   ├── analyticsRoutes.ts            # /api/analytics/*
+│   │   └── employeeRoutes.ts             # /api/employees & /api/departments
+│   ├── types/                            # Backend strict TypeScript contracts
+│   └── index.ts                          # Express server entry point (Port 5001)
+│
+├── src/                                  # Frontend Client Layer (React 19 + TypeScript + Vite)
+│   ├── components/
+│   │   ├── dashboard/
+│   │   │   ├── KpiCardsGrid.tsx          # 5 Mandatory KPI cards (Total, Present, Absent, On Leave, Rate)
+│   │   │   ├── EmployeeDirectoryTable.tsx# Sortable, searchable, paginated workforce directory
+│   │   │   ├── AttendanceTrendChart.tsx  # Multi-series stacked Area Chart (7D, 14D, 30D)
+│   │   │   ├── DepartmentDistributionChart.tsx # Stacked Bar Chart with metric sorting
+│   │   │   ├── WorkforceDonutChart.tsx   # Interactive Donut Chart with dimension toggle
+│   │   │   ├── RecentActivityFeed.tsx    # Telemetry audit feed with pagination
+│   │   │   ├── FilterToolbar.tsx         # Multi-filter toolbar (Dept, Location, Date, Status)
+│   │   │   ├── EmployeeDetailModal.tsx   # Rich employee timecard modal
+│   │   │   ├── ExportModal.tsx           # CSV & JSON export engine
+│   │   │   └── StateFeedback.tsx         # Empty & Error state handlers with Retry
+│   │   └── layout/
+│   │       ├── Sidebar.tsx               # Collapsible responsive sidebar with live badges
+│   │       └── TopNavbar.tsx             # Header with theme toggle, state simulator & profile
+│   ├── context/
+│   │   ├── WorkforceContext.tsx          # Presentation state, filter coordination & sync
+│   │   ├── WorkforceContextDef.ts        # Typed Context interface definitions
+│   │   └── useWorkforce.ts               # Custom consumer hook
+│   ├── services/
+│   │   └── api.ts                        # Frontend API service layer (connects to SQLite backend)
+│   ├── types/                            # Frontend TypeScript contracts
+│   ├── theme/                            # MUI Light/Dark theme definitions
+│   └── App.tsx                           # Application root layout
 ```
 
-### Test Suite Summary
-```text
- ✓ src/test/mockData.test.ts (6 tests)
-   ✓ returns all employees when no filter is applied
-   ✓ filters employees correctly by Department
-   ✓ filters employees correctly by Location
-   ✓ filters employees correctly by Attendance Status
-   ✓ searches employees by name or role case-insensitively
-   ✓ filters activities by search query
+---
 
- ✓ src/test/dashboard.test.tsx (7 tests)
-   ✓ renders brand identity and platform title
-   ✓ renders all five KPI cards
-   ✓ renders the filter toolbar with interactive controls
-   ✓ renders recent workforce activity feed
-   ✓ switches to Error state when Error button is clicked and recovers on Retry
-   ✓ switches to Empty state when Empty button is clicked
-   ✓ toggles theme mode button
+## 💾 SQLite Database Schemas (`server/db/schema.sql`)
 
-Test Files:  2 passed (2)
-Tests:       13 passed (13)
-Duration:    3.07s
+### 1. `departments`
+Stores departmental organization, budget, and target attendance metrics.
+```sql
+CREATE TABLE departments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE NOT NULL,
+  code TEXT UNIQUE NOT NULL,
+  head TEXT NOT NULL,
+  budget REAL NOT NULL DEFAULT 0,
+  target_attendance_rate REAL NOT NULL DEFAULT 95.0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-All 13 automated tests pass with 0 failures and 0 warnings.
+### 2. `employees`
+Stores complete staff records, contract parameters, and live attendance statuses.
+```sql
+CREATE TABLE employees (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  avatar TEXT NOT NULL,
+  role TEXT NOT NULL,
+  department_id INTEGER NOT NULL REFERENCES departments(id),
+  department TEXT NOT NULL,
+  location TEXT NOT NULL,
+  employment_type TEXT NOT NULL CHECK(employment_type IN ('Full-time', 'Contractor', 'Intern', 'Part-time')),
+  work_model TEXT NOT NULL CHECK(work_model IN ('On-site', 'Hybrid', 'Remote')),
+  status TEXT NOT NULL CHECK(status IN ('Present', 'Remote', 'On Leave', 'Absent', 'Half-Day', 'Overtime')),
+  clock_in_time TEXT,
+  hours_worked_today REAL NOT NULL DEFAULT 0,
+  overtime_hours_this_month REAL NOT NULL DEFAULT 0,
+  leave_type TEXT CHECK(leave_type IN ('Annual', 'Sick', 'Parental', 'Casual', 'Unpaid') OR leave_type IS NULL),
+  join_date TEXT NOT NULL,
+  phone TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### 3. `attendance_records`
+Daily telemetry data across past 30+ days for historical trend and rate calculations.
+```sql
+CREATE TABLE attendance_records (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  employee_id TEXT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+  date TEXT NOT NULL, -- Format: YYYY-MM-DD
+  status TEXT NOT NULL CHECK(status IN ('Present', 'Remote', 'On Leave', 'Absent', 'Half-Day', 'Overtime')),
+  clock_in TEXT,
+  clock_out TEXT,
+  hours_worked REAL NOT NULL DEFAULT 0,
+  overtime_hours REAL NOT NULL DEFAULT 0,
+  work_location TEXT,
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(employee_id, date)
+);
+```
+
+### 4. `activities`
+Audit logs of clock-ins, biometric turnstile badges, and leave approvals.
+```sql
+CREATE TABLE activities (
+  id TEXT PRIMARY KEY,
+  employee_id TEXT REFERENCES employees(id) ON DELETE SET NULL,
+  employee_name TEXT NOT NULL,
+  avatar TEXT NOT NULL,
+  department TEXT NOT NULL,
+  role TEXT NOT NULL,
+  activity_type TEXT NOT NULL,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+  status TEXT NOT NULL CHECK(status IN ('Completed', 'Pending', 'Flagged', 'Approved')),
+  details TEXT NOT NULL
+);
+```
 
 ---
 
-## 🛠️ Setup & Running Instructions
+## 📡 REST API Documentation
+
+| Method | Endpoint | Description | Query Parameters |
+|--------|----------|-------------|------------------|
+| `GET` | `/api/health` | Service & SQLite database health check | None |
+| `GET` | `/api/analytics/kpis` | 5 KPI metrics (Total, Present, Absent, On Leave, Rate) | `department`, `location`, `status`, `dateRange` |
+| `GET` | `/api/analytics/trend` | Historical attendance area chart points | `range` (`7d`, `14d`, `30d`), `department`, `location` |
+| `GET` | `/api/analytics/departments` | Department headcounts & attendance rates | `department`, `location`, `status` |
+| `GET` | `/api/analytics/distribution` | Workforce donut chart breakdown | `dimension` (`work_model`, `employment_type`, `department`) |
+| `GET` | `/api/analytics/activities` | Paginated live activity stream | `limit`, `offset`, `department`, `searchQuery` |
+| `GET` | `/api/employees` | Search, sort, and paginate workforce directory | `page`, `limit`, `sortBy`, `sortOrder`, `department`, `location`, `status`, `searchQuery` |
+| `GET` | `/api/employees/:id` | Single employee profile + attendance history | `id` (path param) |
+| `PATCH` | `/api/employees/:id/status` | Update employee attendance status | `{ status, clockInTime }` in body |
+| `GET` | `/api/departments` | Department master catalog | None |
+| `POST` | `/api/seed` | Reseeds SQLite database with fresh dataset | None |
+
+---
+
+## ⚡ Setup & Execution Instructions
 
 ### Prerequisites
-- **Node.js**: v18.0.0 or later (Node 20+ recommended)
-- **npm**: v9.0.0 or later
+- Node.js >= 20.x or 22.x
+- npm >= 10.x
 
-### Installation
-1. Clone or navigate into the repository:
-   ```bash
-   cd review
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Running Locally (Development Mode)
-Start the Vite development server with Hot Module Replacement (HMR):
+### 1. Install Dependencies
 ```bash
+npm install
+```
+
+### 2. Seed SQLite Database
+Populates `workforce.sqlite` with 7 departments, 60 realistic staff members, 30 days of daily attendance telemetry, and activity logs:
+```bash
+npm run server:seed
+```
+
+### 3. Run Frontend & Backend Concurrently
+Launches both the Express SQLite REST API (port 5001) and Vite dev server (port 5173):
+```bash
+npm run dev:all
+```
+Open **[http://localhost:5173](http://localhost:5173)** in your browser.
+
+*Alternative individual startup commands:*
+```bash
+# Terminal 1: Backend Server (Port 5001)
+npm run server
+
+# Terminal 2: Vite Dev Server (Port 5173)
 npm run dev
 ```
-Open your browser and navigate to `http://localhost:5173`.
 
-### Running Tests
-Execute the full automated test suite:
+### 4. Run Test Suite
+Executes all 22 automated integration and unit tests:
 ```bash
 npm test
 ```
 
-### Running the Linter
-Run Oxlint code quality verification:
-```bash
-npm run lint
-```
-
-### Building for Production
-Create the optimized production distribution:
+### 5. Production Build
+Validates strict TypeScript types and compiles Vite production assets:
 ```bash
 npm run build
 ```
-Preview the production build locally:
-```bash
-npm run preview
-```
 
 ---
 
-## 📁 Project Structure
+## 📊 Key Highlights & Task 2 Verification
 
-```text
-review/
-├── index.html                 # HTML5 entrypoint with Google Fonts
-├── package.json               # Dependencies and npm scripts
-├── tsconfig.json              # TypeScript root configuration
-├── tsconfig.app.json          # App TypeScript build rules
-├── vite.config.ts             # Vite & Vitest configuration
-├── src/
-│   ├── main.tsx               # React 19 application root mounting
-│   ├── App.tsx                # Master app shell & theme provider
-│   ├── index.css              # Global styles & layout reset
-│   ├── types/
-│   │   └── workforce.ts       # TypeScript domain models and interfaces
-│   ├── data/
-│   │   └── mockData.ts        # Comprehensive mock dataset and filter helpers
-│   ├── theme/
-│   │   └── theme.ts           # Material UI Light & Dark theme definitions
-│   ├── context/
-│   │   ├── WorkforceContextDef.ts # Context & ContextType interfaces
-│   │   ├── WorkforceContext.tsx   # Centralized state provider
-│   │   └── useWorkforce.ts        # Typed consumer hook
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── Sidebar.tsx        # Responsive collapsible sidebar & navigation
-│   │   │   └── TopNavbar.tsx      # Header, search, simulator & profile menu
-│   │   └── dashboard/
-│   │       ├── WorkforceDashboard.tsx          # Main dashboard page layout
-│   │       ├── FilterToolbar.tsx               # Date, department, location, status filters
-│   │       ├── KpiCardsGrid.tsx                # 5 KPI cards with sparklines & progress
-│   │       ├── AttendanceTrendChart.tsx        # Recharts time-series attendance area chart
-│   │       ├── DepartmentDistributionChart.tsx # Recharts stacked department bar chart
-│   │       ├── WorkforceDonutChart.tsx         # Recharts donut chart with category toggles
-│   │       ├── RecentActivityFeed.tsx          # Live activity table with pagination
-│   │       ├── EmployeeDetailModal.tsx         # Employee profile & attendance details modal
-│   │       ├── ExportModal.tsx                 # CSV & JSON analytics report exporter
-│   │       └── StateFeedback.tsx               # Empty and error state display cards
-│   └── test/
-│       ├── setup.ts           # Vitest environment setup and mocks
-│       ├── mockData.test.ts   # Data filter unit tests
-│       └── dashboard.test.tsx # UI integration and feature tests
-```
+1. **Mandatory 5 KPI Cards**:
+   - **Total Employees**: Real-time enrolled headcount with MoM growth badge and 7-day sparkline.
+   - **Present Today**: Turnstile on-site badges + remote active breakdown with progress indicator.
+   - **Absent**: Unexcused absence tracking with threshold status indicators.
+   - **On Leave**: Planned annual, sick, and parental leave counters.
+   - **Attendance Rate**: Effective workforce presence percentage vs 95.0% enterprise target.
 
----
+2. **Workforce Directory with Full Search, Sorting & Pagination**:
+   - Server-connected search bar filtering names, titles, departments, and IDs.
+   - Sortable column headers (`Employee`, `Role & Title`, `Department`, `Hub / Location`, `Status`, `Hours Worked Today`).
+   - Material UI `TablePagination` with selectable page sizes (5, 10, 25, 50).
+   - Context menus for direct attendance sign-offs and profile inspection.
 
-## 🎨 Enterprise Design Principles Applied
-- **Visual Excellence**: Bespoke indigo (`#4F46E5`), sky (`#0EA5E9`), emerald (`#10B981`), amber (`#F59E0B`), and rose (`#EF4444`) color palette.
-- **Glassmorphism**: Translucent app bar with `backdrop-filter: blur(12px)`.
-- **Accessibility & Contrast**: Conforms to WCAG AA color contrast standards across light and dark modes.
-- **Responsiveness**: Grid layouts that gracefully adapt from multi-column desktop (1600px max width) down to compact mobile phones.
+3. **No Hardcoded Data**:
+   - All dashboard statistics, charts, activity feeds, and table rows are dynamically queried from SQLite using the Repository Pattern.
+
+4. **Edge State Simulator**:
+   - Single-click toolbar toggle to test `Normal`, `Loading`, `Empty`, and `Error` states with recovery actions.
