@@ -48,6 +48,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
     filters,
     setFilter,
     resetFilters,
+    updateStatus,
   } = useWorkforce();
 
   // Local sorting state
@@ -485,7 +486,10 @@ export const EmployeeDirectoryTable: React.FC = () => {
         </MenuItem>
 
         <MenuItem
-          onClick={() => {
+          onClick={async () => {
+            if (activeMenuEmployee) {
+              await updateStatus(activeMenuEmployee.id, 'Present');
+            }
             closeMenu();
           }}
         >
@@ -496,7 +500,10 @@ export const EmployeeDirectoryTable: React.FC = () => {
         </MenuItem>
 
         <MenuItem
-          onClick={() => {
+          onClick={async () => {
+            if (activeMenuEmployee) {
+              await updateStatus(activeMenuEmployee.id, 'On Leave');
+            }
             closeMenu();
           }}
         >
@@ -507,7 +514,10 @@ export const EmployeeDirectoryTable: React.FC = () => {
         </MenuItem>
 
         <MenuItem
-          onClick={() => {
+          onClick={async () => {
+            if (activeMenuEmployee) {
+              await updateStatus(activeMenuEmployee.id, 'Absent');
+            }
             closeMenu();
           }}
         >

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import App from '../App.tsx';
 import { EmployeeRepository } from '../../server/repositories/EmployeeRepository.ts';
 import { DepartmentRepository } from '../../server/repositories/DepartmentRepository.ts';
@@ -74,8 +74,14 @@ describe('Task 2 — Architecture, Backend SQLite & Advanced UI/UX Tests', () =>
   });
 
   describe('2. Advanced Dashboard UI/UX & Employee Table Tests', () => {
-    it('renders the 5 mandatory KPI cards (Total Employees, Present, Absent, On Leave, Attendance Rate)', () => {
-      render(<App />);
+    const renderApp = async () => {
+      await act(async () => {
+        render(<App />);
+      });
+    };
+
+    it('renders the 5 mandatory KPI cards (Total Employees, Present, Absent, On Leave, Attendance Rate)', async () => {
+      await renderApp();
       expect(screen.getAllByText(/Total (Workforce|Employees)/i).length).toBeGreaterThan(0);
       expect(screen.getAllByText(/Present/i).length).toBeGreaterThan(0);
       expect(screen.getAllByText(/Absent/i).length).toBeGreaterThan(0);
@@ -83,8 +89,8 @@ describe('Task 2 — Architecture, Backend SQLite & Advanced UI/UX Tests', () =>
       expect(screen.getAllByText(/Attendance Rate/i).length).toBeGreaterThan(0);
     });
 
-    it('renders the Employee Directory Table with sortable columns and pagination', () => {
-      render(<App />);
+    it('renders the Employee Directory Table with sortable columns and pagination', async () => {
+      await renderApp();
       expect(screen.getByText(/Workforce Directory & Attendance Roster/i)).toBeInTheDocument();
       expect(screen.getByText('Employee')).toBeInTheDocument();
       expect(screen.getByText('Role & Title')).toBeInTheDocument();
@@ -92,18 +98,20 @@ describe('Task 2 — Architecture, Backend SQLite & Advanced UI/UX Tests', () =>
     });
 
     it('allows searching within the Employee Directory Table', async () => {
-      render(<App />);
+      await renderApp();
       const tableSearch = screen.getByPlaceholderText('Search staff, role, ID...');
 
-      fireEvent.change(tableSearch, { target: { value: 'Sarah' } });
+      await act(async () => {
+        fireEvent.change(tableSearch, { target: { value: 'Sarah' } });
+      });
 
       await waitFor(() => {
         expect(screen.getAllByText(/Sarah Chen/i).length).toBeGreaterThan(0);
       });
     });
 
-    it('renders SQLite database connectivity badge in the top operations banner', () => {
-      render(<App />);
+    it('renders SQLite database connectivity badge in the top operations banner', async () => {
+      await renderApp();
       expect(screen.getAllByText(/SQLite DB/i).length).toBeGreaterThan(0);
     });
   });

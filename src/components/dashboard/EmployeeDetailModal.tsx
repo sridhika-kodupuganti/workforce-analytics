@@ -25,7 +25,7 @@ import { useWorkforce } from '../../context/useWorkforce.ts';
 
 export const EmployeeDetailModal: React.FC = () => {
   const theme = useTheme();
-  const { selectedEmployee, setSelectedEmployee } = useWorkforce();
+  const { selectedEmployee, setSelectedEmployee, updateStatus } = useWorkforce();
 
   if (!selectedEmployee) return null;
 
@@ -84,9 +84,11 @@ export const EmployeeDetailModal: React.FC = () => {
                     ? 'success'
                     : selectedEmployee.status === 'Remote'
                       ? 'primary'
-                      : selectedEmployee.status === 'Overtime'
+                      : selectedEmployee.status === 'Absent'
                         ? 'error'
-                        : 'warning'
+                        : selectedEmployee.status === 'Overtime'
+                          ? 'secondary'
+                          : 'warning'
                 }
                 sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700 }}
               />
@@ -219,12 +221,14 @@ export const EmployeeDetailModal: React.FC = () => {
         <Button
           variant="contained"
           startIcon={<CheckCircleIcon />}
-          onClick={() => {
-            alert(`Verified badge & attendance for ${selectedEmployee.name}`);
-            setSelectedEmployee(null);
+          onClick={async () => {
+            if (selectedEmployee) {
+              await updateStatus(selectedEmployee.id, 'Present');
+              setSelectedEmployee(null);
+            }
           }}
         >
-          Verify Attendance
+          Verify Attendance (Present)
         </Button>
       </DialogActions>
     </Dialog>
