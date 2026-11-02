@@ -7,7 +7,7 @@ An enterprise-grade, modern Workforce Analytics and Attendance Management platfo
 
 ## 🎨 Figma Design & UI/UX System
 
-- **Figma Design Link**: [https://www.figma.com/file/WorkforceIQ-Analytics-Platform-Task2](https://www.figma.com/design/workforce-analytics-dashboard)
+- **Figma Design System**: Built following the enterprise Workforce Analytics design specifications. *(Provide your team's Figma URL to link directly to your canvas workspace)*
 - **Design Tokens & System**:
   - **Color Palette**: High-contrast Slate `#0F172A`, Deep Navy `#1E293B`, Indigo Accent `#6366F1`, Emerald Success `#10B981`, Sky Active `#0EA5E9`, Amber Alert `#F59E0B`, Crimson Danger `#EF4444`.
   - **Typography**: Google Fonts (*Plus Jakarta Sans* for headers, *Inter* for body and tabular numbers).
