@@ -9,11 +9,16 @@ import type {
   AttendanceTrendPoint,
   WorkforceDistributionItem,
 } from '../types/workforce.ts';
+import type { ColorPreset } from '../theme/theme.ts';
+
+export type { ColorPreset };
 
 export interface WorkforceContextType {
   themeMode: 'light' | 'dark';
   toggleTheme: () => void;
   setThemeMode: (mode: 'light' | 'dark') => void;
+  colorPreset: ColorPreset;
+  setColorPreset: (preset: ColorPreset) => void;
 
   viewState: DashboardViewState;
   setViewState: (state: DashboardViewState) => void;
@@ -46,11 +51,14 @@ export interface WorkforceContextType {
   selectedEmployee: Employee | null;
   setSelectedEmployee: (emp: Employee | null) => void;
 
+  attendanceModalEmployee: Employee | null;
+  setAttendanceModalEmployee: (emp: Employee | null) => void;
+
   isExportOpen: boolean;
   setIsExportOpen: (open: boolean) => void;
 
   refreshData: () => void;
-  updateStatus: (id: string, status: string) => Promise<void>;
+  updateStatus: (id: string, status: string, clockInTime?: string) => Promise<void>;
 }
 
 export const WorkforceContext = createContext<WorkforceContextType | undefined>(undefined);

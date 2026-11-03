@@ -66,6 +66,31 @@ export const WorkforceDonutChart: React.FC = () => {
 
   const isDark = theme.palette.mode === 'dark';
 
+  const dataset: WorkforceDistributionItem[] =
+    sliceType === 'workModel'
+      ? WORK_MODEL_DISTRIBUTION
+      : sliceType === 'employmentType'
+        ? EMPLOYMENT_TYPE_DISTRIBUTION
+        : DEPARTMENT_PIE_DISTRIBUTION;
+
+  const datasetWithColors = React.useMemo(() => {
+    const paletteScale = [
+      theme.palette.primary.main,
+      theme.palette.secondary.main,
+      theme.palette.success.main,
+      theme.palette.warning.main,
+      theme.palette.info.main,
+      theme.palette.mode === 'dark' ? '#C084FC' : '#8B5CF6',
+      theme.palette.mode === 'dark' ? '#2DD4BF' : '#0D9488',
+    ];
+    return dataset.map((item, i) => ({
+      ...item,
+      color: paletteScale[i % paletteScale.length],
+    }));
+  }, [dataset, theme]);
+
+  const total = datasetWithColors.reduce((sum, item) => sum + item.value, 0);
+
   if (viewState === 'loading') {
     return (
       <Card sx={{ p: 2.5, borderRadius: 3, height: 380 }}>
@@ -79,15 +104,6 @@ export const WorkforceDonutChart: React.FC = () => {
       </Card>
     );
   }
-
-  const dataset: WorkforceDistributionItem[] =
-    sliceType === 'workModel'
-      ? WORK_MODEL_DISTRIBUTION
-      : sliceType === 'employmentType'
-        ? EMPLOYMENT_TYPE_DISTRIBUTION
-        : DEPARTMENT_PIE_DISTRIBUTION;
-
-  const total = dataset.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <Card sx={{ borderRadius: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -166,7 +182,7 @@ export const WorkforceDonutChart: React.FC = () => {
               <PieChart>
                 <RechartsTooltip content={<DonutTooltip />} />
                 <Pie
-                  data={dataset}
+                  data={datasetWithColors}
                   cx="50%"
                   cy="50%"
                   innerRadius={65}
@@ -176,11 +192,11 @@ export const WorkforceDonutChart: React.FC = () => {
                   onMouseEnter={(_data, index) => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(null)}
                 >
-                  {dataset.map((entry, index) => (
+                  {datasetWithColors.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={entry.color}
-                      stroke={isDark ? '#111827' : '#FFFFFF'}
+                      stroke={isDark ? theme.palette.background.paper : '#FFFFFF'}
                       strokeWidth={activeIndex === index ? 3 : 2}
                       style={{
                         transition: 'transform 0.2s ease',
@@ -227,7 +243,7 @@ export const WorkforceDonutChart: React.FC = () => {
               pr: 0.5,
             }}
           >
-            {dataset.map((item, idx) => {
+            {datasetWithColors.map((item, idx) => {
               const isHovered = activeIndex === idx;
               return (
                 <Box

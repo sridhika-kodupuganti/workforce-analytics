@@ -22,6 +22,8 @@ import {
   useMediaQuery,
   ToggleButton,
   ToggleButtonGroup,
+  Avatar,
+  alpha,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -37,7 +39,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import PaletteIcon from '@mui/icons-material/Palette';
+import CheckIcon from '@mui/icons-material/Check';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { useWorkforce } from '../../context/useWorkforce.ts';
+import { THEME_PRESETS } from '../../theme/theme.ts';
 import type { DashboardViewState } from '../../types/workforce.ts';
 
 export const TopNavbar: React.FC = () => {
@@ -48,6 +54,8 @@ export const TopNavbar: React.FC = () => {
   const {
     themeMode,
     toggleTheme,
+    colorPreset,
+    setColorPreset,
     toggleSidebar,
     viewState,
     simulateState,
@@ -56,6 +64,15 @@ export const TopNavbar: React.FC = () => {
     setFilter,
     setIsExportOpen,
   } = useWorkforce();
+
+  // Color preset menu state
+  const [anchorElPalette, setAnchorElPalette] = useState<null | HTMLElement>(null);
+  const handleOpenPalette = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElPalette(event.currentTarget);
+  };
+  const handleClosePalette = () => {
+    setAnchorElPalette(null);
+  };
 
   // Profile menu state
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -343,6 +360,126 @@ export const TopNavbar: React.FC = () => {
             </List>
           </Popover>
 
+          {/* Color Palette Theme Preset Picker */}
+          <Tooltip title="Choose Color Theme Preset">
+            <IconButton
+              size="small"
+              onClick={handleOpenPalette}
+              aria-label="select color theme preset"
+              sx={{
+                color: theme.palette.text.secondary,
+                backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+                '&:hover': {
+                  color: theme.palette.text.primary,
+                  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                },
+              }}
+            >
+              <PaletteIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
+            </IconButton>
+          </Tooltip>
+
+          <Menu
+            anchorEl={anchorElPalette}
+            open={Boolean(anchorElPalette)}
+            onClose={handleClosePalette}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            slotProps={{
+              paper: {
+                sx: {
+                  width: 290,
+                  p: 1,
+                  borderRadius: 3,
+                  boxShadow: '0 12px 36px rgba(0, 0, 0, 0.35)',
+                },
+              },
+            }}
+          >
+            <Box sx={{ px: 1.5, py: 1 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                <AutoAwesomeIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
+                Aesthetic Color Themes
+              </Typography>
+              <Typography variant="caption" sx={{ color: theme.palette.text.secondary, fontSize: '0.72rem' }}>
+                Curated executive palettes for modern analytics
+              </Typography>
+            </Box>
+            <Divider sx={{ my: 0.5 }} />
+
+            {Object.values(THEME_PRESETS).map((p) => {
+              const isSelected = colorPreset === p.id;
+              return (
+                <MenuItem
+                  key={p.id}
+                  onClick={() => {
+                    setColorPreset(p.id);
+                    handleClosePalette();
+                  }}
+                  sx={{
+                    borderRadius: 2,
+                    my: 0.4,
+                    py: 1,
+                    px: 1.2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    backgroundColor: isSelected
+                      ? theme.palette.mode === 'dark'
+                        ? 'rgba(255, 255, 255, 0.08)'
+                        : 'rgba(0, 0, 0, 0.05)'
+                      : 'transparent',
+                    border: isSelected ? `1px solid ${theme.palette.primary.main}` : '1px solid transparent',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', width: 28, height: 20 }}>
+                      <Box
+                        sx={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: '50%',
+                          backgroundColor: p.previewPrimary,
+                          border: '2px solid #FFFFFF',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          position: 'absolute',
+                          left: 0,
+                          zIndex: 1,
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: '50%',
+                          backgroundColor: p.previewSecondary,
+                          border: '2px solid #FFFFFF',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          position: 'absolute',
+                          left: 10,
+                          zIndex: 0,
+                        }}
+                      />
+                    </Box>
+
+                    <Box>
+                      <Typography sx={{ fontSize: '0.825rem', fontWeight: isSelected ? 700 : 500 }}>
+                        {p.name}
+                      </Typography>
+                      <Typography sx={{ fontSize: '0.675rem', color: theme.palette.text.secondary }}>
+                        {p.tagline}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {isSelected && (
+                    <CheckIcon fontSize="small" sx={{ color: theme.palette.primary.main, ml: 1 }} />
+                  )}
+                </MenuItem>
+              );
+            })}
+          </Menu>
+
           {/* Theme Mode Toggle Button */}
           <Tooltip title={`Switch to ${themeMode === 'light' ? 'Dark' : 'Light'} Mode`}>
             <IconButton
@@ -359,26 +496,29 @@ export const TopNavbar: React.FC = () => {
               }}
             >
               {themeMode === 'light' ? (
-                <DarkModeIcon fontSize="small" sx={{ color: '#4F46E5' }} />
+                <DarkModeIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
               ) : (
-                <LightModeIcon fontSize="small" sx={{ color: '#FBBF24' }} />
+                <LightModeIcon fontSize="small" sx={{ color: theme.palette.warning.main }} />
               )}
             </IconButton>
           </Tooltip>
 
           {/* User Profile Avatar & Menu */}
-          <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.3, ml: 0.5 }}>
-            <Box
-              component="img"
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
-              alt="Profile"
+          <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.3, ml: 0.5 }} aria-label="user profile menu">
+            <Avatar
+              alt="Sridhika"
               sx={{
                 width: 34,
                 height: 34,
-                borderRadius: '50%',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                backgroundColor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.12),
+                color: theme.palette.primary.main,
                 border: `2px solid ${theme.palette.primary.main}`,
               }}
-            />
+            >
+              S
+            </Avatar>
           </IconButton>
 
           <Menu
@@ -390,7 +530,7 @@ export const TopNavbar: React.FC = () => {
             slotProps={{
               paper: {
                 sx: {
-                  width: 220,
+                  width: 230,
                   borderRadius: 3,
                   mt: 1.5,
                   boxShadow: theme.shadows[8],
@@ -398,13 +538,29 @@ export const TopNavbar: React.FC = () => {
               },
             }}
           >
-            <Box sx={{ px: 2, py: 1.5 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                Sridhika
-              </Typography>
-              <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                sridhika@workforceiq.corp
-              </Typography>
+            <Box sx={{ px: 2, py: 1.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Avatar
+                alt="Sridhika"
+                sx={{
+                  width: 36,
+                  height: 36,
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  backgroundColor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.12),
+                  color: theme.palette.primary.main,
+                  border: `2px solid ${theme.palette.primary.main}`,
+                }}
+              >
+                S
+              </Avatar>
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                  Sridhika
+                </Typography>
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+                  sridhika@workforceiq.corp
+                </Typography>
+              </Box>
             </Box>
             <Divider />
             <MenuItem onClick={handleCloseUserMenu} sx={{ fontSize: '0.85rem', py: 1 }}>

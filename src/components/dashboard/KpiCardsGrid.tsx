@@ -9,6 +9,7 @@ import {
   Tooltip,
   useTheme,
   Skeleton,
+  alpha,
 } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -70,27 +71,27 @@ export const KpiCardsGrid: React.FC = () => {
       metric: kpis.totalWorkforce || kpis.totalEmployees,
       icon: <GroupsIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
-        ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(79, 70, 229, 0.05) 100%)'
-        : 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
-      accentColor: '#6366F1',
+        ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.18)} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`
+        : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, #FFFFFF 100%)`,
+      accentColor: theme.palette.primary.main,
     },
     {
       key: 'attendanceRate',
       metric: kpis.attendanceRate,
       icon: <EventAvailableIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
-        ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.05) 100%)'
-        : 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
-      accentColor: '#10B981',
+        ? `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.18)} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`
+        : `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.08)} 0%, #FFFFFF 100%)`,
+      accentColor: theme.palette.success.main,
     },
     {
       key: 'presentToday',
       metric: kpis.presentToday || kpis.present,
       icon: <MeetingRoomIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
-        ? 'linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(2, 132, 199, 0.05) 100%)'
-        : 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
-      accentColor: '#0EA5E9',
+        ? `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.18)} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`
+        : `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.08)} 0%, #FFFFFF 100%)`,
+      accentColor: theme.palette.secondary.main,
     },
     {
       key: 'absent',
@@ -107,27 +108,27 @@ export const KpiCardsGrid: React.FC = () => {
       },
       icon: <PersonOffIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
-        ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%)'
-        : 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
-      accentColor: '#EF4444',
+        ? `linear-gradient(135deg, ${alpha(theme.palette.error.main, 0.18)} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`
+        : `linear-gradient(135deg, ${alpha(theme.palette.error.main, 0.08)} 0%, #FFFFFF 100%)`,
+      accentColor: theme.palette.error.main,
     },
     {
       key: 'onLeave',
       metric: kpis.onLeave,
       icon: <EventBusyIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
-        ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%)'
-        : 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
-      accentColor: '#F59E0B',
+        ? `linear-gradient(135deg, ${alpha(theme.palette.warning.main, 0.18)} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`
+        : `linear-gradient(135deg, ${alpha(theme.palette.warning.main, 0.08)} 0%, #FFFFFF 100%)`,
+      accentColor: theme.palette.warning.main,
     },
     {
       key: 'overtimeHours',
       metric: kpis.overtimeHours,
       icon: <MoreTimeIcon sx={{ fontSize: 22 }} />,
       gradient: isDark
-        ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(124, 58, 237, 0.05) 100%)'
-        : 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
-      accentColor: '#8B5CF6',
+        ? `linear-gradient(135deg, ${alpha(theme.palette.mode === 'dark' ? '#C084FC' : '#7C3AED', 0.18)} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`
+        : `linear-gradient(135deg, ${alpha(theme.palette.mode === 'dark' ? '#C084FC' : '#7C3AED', 0.08)} 0%, #FFFFFF 100%)`,
+      accentColor: theme.palette.mode === 'dark' ? '#C084FC' : '#7C3AED',
     },
   ];
 
@@ -197,12 +198,17 @@ export const KpiCardsGrid: React.FC = () => {
               background: gradient,
               borderRadius: 3,
               overflow: 'hidden',
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              border: `1px solid ${isDark ? alpha(accentColor, 0.22) : alpha(accentColor, 0.16)}`,
+              boxShadow: isDark
+                ? `0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 16px -6px ${alpha(accentColor, 0.25)}`
+                : `0 4px 16px -2px rgba(15, 23, 42, 0.04), 0 0 12px -4px ${alpha(accentColor, 0.15)}`,
+              transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
               '&:hover': {
-                transform: 'translateY(-2px)',
+                transform: 'translateY(-3px)',
+                borderColor: accentColor,
                 boxShadow: isDark
-                  ? '0 8px 24px -4px rgba(0,0,0,0.6)'
-                  : '0 8px 20px -4px rgba(15, 23, 42, 0.08)',
+                  ? `0 12px 30px -4px rgba(0, 0, 0, 0.7), 0 0 24px -4px ${alpha(accentColor, 0.4)}`
+                  : `0 12px 28px -4px rgba(15, 23, 42, 0.08), 0 0 20px -4px ${alpha(accentColor, 0.25)}`,
               },
             }}
           >

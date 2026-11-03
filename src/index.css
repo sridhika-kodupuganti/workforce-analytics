@@ -1,4 +1,4 @@
-/* Modern Clean Reset for WorkforceIQ Dashboard */
+/* Modern Clean Reset for Stackly Executive Dashboard */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -24,5 +24,22 @@ html, body {
 
 /* Custom smooth transitions for theme switches */
 body {
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.25);
+  color: inherit;
+}
+
+/* Clean animation for spin items */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
 }

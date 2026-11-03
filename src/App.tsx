@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider, CssBaseline, Box, Typography, Link as MuiLink } from '@mui/material';
+import { ThemeProvider, CssBaseline, Box, Typography, Link as MuiLink, alpha } from '@mui/material';
 import { WorkforceProvider } from './context/WorkforceContext.tsx';
 import { useWorkforce } from './context/useWorkforce.ts';
 import { getAppTheme } from './theme/theme.ts';
@@ -8,13 +8,25 @@ import { TopNavbar } from './components/layout/TopNavbar.tsx';
 import { WorkforceDashboard } from './components/dashboard/WorkforceDashboard.tsx';
 
 const AppContent: React.FC = () => {
-  const { themeMode } = useWorkforce();
-  const theme = React.useMemo(() => getAppTheme(themeMode), [themeMode]);
+  const { themeMode, colorPreset } = useWorkforce();
+  const theme = React.useMemo(() => getAppTheme(themeMode, colorPreset), [themeMode, colorPreset]);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%', backgroundColor: theme.palette.background.default }}>
+      <Box
+        sx={{
+          display: 'flex',
+          minHeight: '100vh',
+          width: '100%',
+          backgroundColor: theme.palette.background.default,
+          backgroundImage: theme.palette.mode === 'dark'
+            ? `radial-gradient(ellipse 90% 50% at 50% -10%, ${alpha(theme.palette.primary.main, 0.15)}, transparent)`
+            : `radial-gradient(ellipse 90% 50% at 50% -10%, ${alpha(theme.palette.primary.main, 0.06)}, transparent)`,
+          backgroundAttachment: 'fixed',
+          transition: 'background-color 0.3s ease',
+        }}
+      >
         {/* Responsive Collapsible Sidebar */}
         <Sidebar />
 
@@ -39,11 +51,12 @@ const AppContent: React.FC = () => {
               justifyContent: 'space-between',
               alignItems: 'center',
               gap: 1.5,
-              backgroundColor: theme.palette.mode === 'dark' ? 'rgba(11, 15, 25, 0.6)' : 'rgba(255, 255, 255, 0.6)',
+              backgroundColor: theme.palette.mode === 'dark' ? alpha(theme.palette.background.paper, 0.6) : alpha(theme.palette.background.paper, 0.6),
+              backdropFilter: 'blur(10px)',
             }}
           >
             <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-              © 2026 WorkforceIQ Platform Inc. All rights reserved. Enterprise Workforce Telemetry & Attendance v2.4.0
+              © 2026 Stackly Platform Inc. All rights reserved. Enterprise Workforce Telemetry & Attendance v2.4.0
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 2 }}>

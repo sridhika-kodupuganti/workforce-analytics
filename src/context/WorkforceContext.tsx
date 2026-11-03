@@ -19,7 +19,7 @@ import {
   filterActivities,
 } from '../data/mockData.ts';
 import { workforceApi } from '../services/api.ts';
-import { WorkforceContext } from './WorkforceContextDef.ts';
+import { WorkforceContext, type ColorPreset } from './WorkforceContextDef.ts';
 
 const DEFAULT_FILTERS: DashboardFilters = {
   dateRange: '30d',
@@ -57,6 +57,28 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setThemeModeState(mode);
     try {
       localStorage.setItem('workforce_theme', mode);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Color preset state (Aesthetic theme options)
+  const [colorPreset, setColorPresetState] = useState<ColorPreset>(() => {
+    try {
+      const saved = localStorage.getItem('workforce_palette') as ColorPreset;
+      if (saved && ['royal', 'emerald', 'sapphire', 'rose', 'amber'].includes(saved)) {
+        return saved;
+      }
+      return 'royal';
+    } catch {
+      return 'royal';
+    }
+  });
+
+  const setColorPreset = useCallback((preset: ColorPreset) => {
+    setColorPresetState(preset);
+    try {
+      localStorage.setItem('workforce_palette', preset);
     } catch {
       // ignore
     }
@@ -199,16 +221,37 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, []);
 
+  // Attendance modal employee state
+  const [attendanceModalEmployee, setAttendanceModalEmployee] = useState<Employee | null>(null);
+
   // Update employee status (e.g. clock-in / mark absent) via SQLite API
-  const updateStatus = useCallback(async (id: string, status: string) => {
-    const success = await workforceApi.updateEmployeeStatus(id, status);
-    if (success) {
-      // Optimistic update
-      setEmployees((prev) =>
-        prev.map((emp) => (emp.id === id ? { ...emp, status: status as any } : emp)),
-      );
-      void refreshData();
+  const updateStatus = useCallback(async (id: string, status: string, clockInTime?: string) => {
+    try {
+      await workforceApi.updateEmployeeStatus(id, status, clockInTime);
+    } catch {
+      // ignore
     }
+    setEmployees((prev) =>
+      prev.map((emp) =>
+        emp.id === id
+          ? {
+              ...emp,
+              status: status as any,
+              ...(clockInTime !== undefined ? { clockInTime } : {}),
+            }
+          : emp,
+      ),
+    );
+    setSelectedEmployee((prev) =>
+      prev && prev.id === id
+        ? {
+            ...prev,
+            status: status as any,
+            ...(clockInTime !== undefined ? { clockInTime } : {}),
+          }
+        : prev,
+    );
+    void refreshData();
   }, [refreshData]);
 
   return (
@@ -217,6 +260,8 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         themeMode,
         toggleTheme,
         setThemeMode,
+        colorPreset,
+        setColorPreset,
         viewState,
         setViewState,
         simulateState,
@@ -240,6 +285,8 @@ export const WorkforceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         kpis,
         selectedEmployee,
         setSelectedEmployee,
+        attendanceModalEmployee,
+        setAttendanceModalEmployee,
         isExportOpen,
         setIsExportOpen,
         refreshData,

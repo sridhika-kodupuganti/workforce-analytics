@@ -30,22 +30,22 @@ import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
 import { useWorkforce } from '../../context/useWorkforce.ts';
 import type { ActivityItem } from '../../types/workforce.ts';
 
-const getActivityIcon = (type: ActivityItem['activityType']) => {
+const getActivityIcon = (type: ActivityItem['activityType'], theme: any) => {
   switch (type) {
     case 'Clock-in':
-      return <LoginIcon fontSize="small" sx={{ color: '#10B981' }} />;
+      return <LoginIcon fontSize="small" sx={{ color: theme.palette.success.main }} />;
     case 'Clock-out':
-      return <LogoutIcon fontSize="small" sx={{ color: '#64748B' }} />;
+      return <LogoutIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />;
     case 'Leave Approved':
-      return <CheckCircleIcon fontSize="small" sx={{ color: '#0EA5E9' }} />;
+      return <CheckCircleIcon fontSize="small" sx={{ color: theme.palette.secondary.main }} />;
     case 'Leave Requested':
-      return <PendingActionsIcon fontSize="small" sx={{ color: '#F59E0B' }} />;
+      return <PendingActionsIcon fontSize="small" sx={{ color: theme.palette.warning.main }} />;
     case 'Remote Check-in':
-      return <WifiTetheringIcon fontSize="small" sx={{ color: '#6366F1' }} />;
+      return <WifiTetheringIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />;
     case 'Overtime Logged':
-      return <AccessTimeIcon fontSize="small" sx={{ color: '#EC4899' }} />;
+      return <AccessTimeIcon fontSize="small" sx={{ color: theme.palette.mode === 'dark' ? '#C084FC' : '#7C3AED' }} />;
     case 'Shift Swapped':
-      return <SwapHorizIcon fontSize="small" sx={{ color: '#8B5CF6' }} />;
+      return <SwapHorizIcon fontSize="small" sx={{ color: theme.palette.secondary.main }} />;
     default:
       return <HistoryIcon fontSize="small" />;
   }
@@ -199,7 +199,7 @@ export const RecentActivityFeed: React.FC = () => {
                     {/* Activity Type with Icon */}
                     <TableCell sx={{ py: 1.2 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                        {getActivityIcon(act.activityType)}
+                        {getActivityIcon(act.activityType, theme)}
                         <Typography variant="body2" sx={{ fontSize: '0.8rem', fontWeight: 500 }}>
                           {act.activityType}
                         </Typography>

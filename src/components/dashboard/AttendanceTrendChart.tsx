@@ -59,7 +59,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-            <FiberManualRecordIcon sx={{ fontSize: 10, color: '#4F46E5' }} />
+            <FiberManualRecordIcon sx={{ fontSize: 10, color: theme.palette.primary.main }} />
             <Typography variant="caption" sx={{ color: '#CBD5E1' }}>
               On-Site Present:
             </Typography>
@@ -71,7 +71,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-            <FiberManualRecordIcon sx={{ fontSize: 10, color: '#0EA5E9' }} />
+            <FiberManualRecordIcon sx={{ fontSize: 10, color: theme.palette.secondary.main }} />
             <Typography variant="caption" sx={{ color: '#CBD5E1' }}>
               Remote Active:
             </Typography>
@@ -83,7 +83,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-            <FiberManualRecordIcon sx={{ fontSize: 10, color: '#F59E0B' }} />
+            <FiberManualRecordIcon sx={{ fontSize: 10, color: theme.palette.warning.main }} />
             <Typography variant="caption" sx={{ color: '#CBD5E1' }}>
               On Leave / Absent:
             </Typography>
@@ -103,10 +103,10 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
             borderTop: '1px solid rgba(255,255,255,0.15)',
           }}
         >
-          <Typography variant="caption" sx={{ fontWeight: 700, color: '#34D399' }}>
+          <Typography variant="caption" sx={{ fontWeight: 700, color: theme.palette.success.main }}>
             Effective Rate:
           </Typography>
-          <Typography variant="caption" sx={{ fontWeight: 800, color: '#34D399' }}>
+          <Typography variant="caption" sx={{ fontWeight: 800, color: theme.palette.success.main }}>
             {rate}%
           </Typography>
         </Box>
@@ -210,16 +210,16 @@ export const AttendanceTrendChart: React.FC = () => {
             >
               <defs>
                 <linearGradient id="colorPresent" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.6} />
-                  <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.02} />
+                  <stop offset="5%" stopColor={theme.palette.primary.main} stopOpacity={0.45} />
+                  <stop offset="95%" stopColor={theme.palette.primary.main} stopOpacity={0.0} />
                 </linearGradient>
                 <linearGradient id="colorRemote" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.5} />
-                  <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0.02} />
+                  <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.4} />
+                  <stop offset="95%" stopColor={theme.palette.secondary.main} stopOpacity={0.0} />
                 </linearGradient>
                 <linearGradient id="colorLeave" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.01} />
+                  <stop offset="5%" stopColor={theme.palette.warning.main} stopOpacity={0.35} />
+                  <stop offset="95%" stopColor={theme.palette.warning.main} stopOpacity={0.0} />
                 </linearGradient>
               </defs>
 
@@ -257,7 +257,7 @@ export const AttendanceTrendChart: React.FC = () => {
                 type="monotone"
                 dataKey="present"
                 name="On-site Badge-in"
-                stroke="#4F46E5"
+                stroke={theme.palette.primary.main}
                 strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#colorPresent)"
@@ -266,7 +266,7 @@ export const AttendanceTrendChart: React.FC = () => {
                 type="monotone"
                 dataKey="remote"
                 name="Remote Active"
-                stroke="#0EA5E9"
+                stroke={theme.palette.secondary.main}
                 strokeWidth={2.2}
                 fillOpacity={1}
                 fill="url(#colorRemote)"
@@ -275,7 +275,7 @@ export const AttendanceTrendChart: React.FC = () => {
                 type="monotone"
                 dataKey="onLeave"
                 name="On Leave"
-                stroke="#F59E0B"
+                stroke={theme.palette.warning.main}
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorLeave)"

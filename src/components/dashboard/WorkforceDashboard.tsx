@@ -9,6 +9,7 @@ import {
   Grid,
   Tabs,
   Tab,
+  alpha,
 } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
@@ -16,6 +17,7 @@ import SyncIcon from '@mui/icons-material/Sync';
 import StorageIcon from '@mui/icons-material/Storage';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import { FilterToolbar } from './FilterToolbar.tsx';
 import { KpiCardsGrid } from './KpiCardsGrid.tsx';
 import { AttendanceTrendChart } from './AttendanceTrendChart.tsx';
@@ -24,6 +26,7 @@ import { WorkforceDonutChart } from './WorkforceDonutChart.tsx';
 import { RecentActivityFeed } from './RecentActivityFeed.tsx';
 import { EmployeeDirectoryTable } from './EmployeeDirectoryTable.tsx';
 import { EmployeeDetailModal } from './EmployeeDetailModal.tsx';
+import { ChangeAttendanceModal } from './ChangeAttendanceModal.tsx';
 import { ExportModal } from './ExportModal.tsx';
 import { StateFeedback } from './StateFeedback.tsx';
 import { useWorkforce } from '../../context/useWorkforce.ts';
@@ -34,10 +37,21 @@ export const WorkforceDashboard: React.FC = () => {
   const isDark = theme.palette.mode === 'dark';
 
   // Derive activeTab from global activeNav
-  const activeTab = activeNav === 'employees' ? 'directory' : 'overview';
+  const activeTab: 'overview' | 'attendance' | 'directory' =
+    activeNav === 'employees'
+      ? 'directory'
+      : activeNav === 'attendance'
+        ? 'attendance'
+        : 'overview';
 
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: 'overview' | 'directory') => {
-    setActiveNav(newValue === 'directory' ? 'employees' : 'dashboard');
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: 'overview' | 'attendance' | 'directory') => {
+    setActiveNav(
+      newValue === 'directory'
+        ? 'employees'
+        : newValue === 'attendance'
+          ? 'attendance'
+          : 'dashboard',
+    );
   };
 
   return (
@@ -76,13 +90,17 @@ export const WorkforceDashboard: React.FC = () => {
               href="#"
               sx={{ fontSize: '0.8125rem', color: theme.palette.text.secondary }}
             >
-              WorkforceIQ Platform
+              Stackly Platform
             </Link>
             <Typography
               color="primary"
               sx={{ fontSize: '0.8125rem', fontWeight: 600 }}
             >
-              {activeTab === 'directory' ? 'Workforce Directory' : 'Operations Dashboard'}
+              {activeTab === 'directory'
+                ? 'Workforce Directory'
+                : activeTab === 'attendance'
+                  ? 'Attendance & Logs'
+                  : 'Operations Dashboard'}
             </Typography>
           </Breadcrumbs>
 
@@ -108,15 +126,15 @@ export const WorkforceDashboard: React.FC = () => {
         {/* Sync & Operational Status Badge */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
           <Chip
-            icon={<StorageIcon sx={{ fontSize: '14px !important', color: backendStatus === 'connected' ? '#10B981' : '#F59E0B' }} />}
+            icon={<StorageIcon sx={{ fontSize: '14px !important', color: backendStatus === 'connected' ? `${theme.palette.success.main} !important` : `${theme.palette.warning.main} !important` }} />}
             label={backendStatus === 'connected' ? 'SQLite DB Connected' : 'SQLite DB Online'}
             size="small"
             variant="outlined"
             sx={{
               fontSize: '0.72rem',
               fontWeight: 600,
-              borderColor: backendStatus === 'connected' ? 'rgba(16, 185, 129, 0.4)' : theme.palette.divider,
-              backgroundColor: isDark ? 'rgba(16, 185, 129, 0.08)' : 'rgba(16, 185, 129, 0.05)',
+              borderColor: backendStatus === 'connected' ? alpha(theme.palette.success.main, 0.4) : theme.palette.divider,
+              backgroundColor: isDark ? alpha(theme.palette.success.main, 0.08) : alpha(theme.palette.success.main, 0.05),
             }}
           />
 
@@ -139,7 +157,7 @@ export const WorkforceDashboard: React.FC = () => {
             sx={{
               fontSize: '0.72rem',
               fontWeight: 700,
-              backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+              backgroundColor: isDark ? alpha(theme.palette.success.main, 0.15) : alpha(theme.palette.success.main, 0.1),
               color: theme.palette.success.main,
             }}
           />
@@ -179,6 +197,12 @@ export const WorkforceDashboard: React.FC = () => {
             value="overview"
           />
           <Tab
+            icon={<AccessTimeFilledIcon sx={{ fontSize: 18 }} />}
+            iconPosition="start"
+            label="Attendance Roster & Logs"
+            value="attendance"
+          />
+          <Tab
             icon={<PeopleAltIcon sx={{ fontSize: 18 }} />}
             iconPosition="start"
             label={`Workforce Directory & Records (${filteredEmployees.length})`}
@@ -212,6 +236,20 @@ export const WorkforceDashboard: React.FC = () => {
           {/* Integrated Employee Directory Table with Search, Sort & Pagination */}
           <EmployeeDirectoryTable />
         </>
+      ) : activeTab === 'attendance' ? (
+        /* Focused Attendance Roster & Logs View */
+        <>
+          <Grid container spacing={3} sx={{ mb: 3 }}>
+            <Grid size={{ xs: 12, lg: 7 }}>
+              <AttendanceTrendChart />
+            </Grid>
+            <Grid size={{ xs: 12, lg: 5 }}>
+              <RecentActivityFeed />
+            </Grid>
+          </Grid>
+
+          <EmployeeDirectoryTable />
+        </>
       ) : (
         /* Full Dedicated Directory View */
         <Box sx={{ mb: 3 }}>
@@ -219,8 +257,9 @@ export const WorkforceDashboard: React.FC = () => {
         </Box>
       )}
 
-      {/* Interactive Detail Modal & Export Modal */}
+      {/* Interactive Detail Modal, Attendance Change Modal & Export Modal */}
       <EmployeeDetailModal />
+      <ChangeAttendanceModal />
       <ExportModal />
     </Box>
   );

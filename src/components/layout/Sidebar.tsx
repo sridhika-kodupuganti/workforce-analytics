@@ -15,6 +15,7 @@ import {
   useTheme,
   useMediaQuery,
   Tooltip,
+  alpha,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
@@ -24,7 +25,7 @@ import InsightsIcon from '@mui/icons-material/Insights';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import HubIcon from '@mui/icons-material/Hub';
+import LayersIcon from '@mui/icons-material/Layers';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { useWorkforce } from '../../context/useWorkforce.ts';
 
@@ -68,7 +69,7 @@ export const Sidebar: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: theme.palette.mode === 'dark' ? '#0F172A' : '#FFFFFF',
+        backgroundColor: theme.palette.background.paper,
         color: theme.palette.text.primary,
         borderRight: `1px solid ${theme.palette.divider}`,
         overflowX: 'hidden',
@@ -91,26 +92,21 @@ export const Sidebar: React.FC = () => {
               width: 38,
               height: 38,
               borderRadius: 2,
-              background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+              background: `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#FFFFFF',
-              boxShadow: '0 4px 14px rgba(79, 70, 229, 0.4)',
+              color: theme.palette.primary.contrastText,
+              boxShadow: `0 4px 16px ${alpha(theme.palette.primary.main, 0.4)}`,
               flexShrink: 0,
             }}
           >
-            <HubIcon fontSize="small" />
+            <LayersIcon fontSize="small" />
           </Box>
           {(sidebarOpen || isMobile) && (
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.05rem', lineHeight: 1.2 }}>
-                Workforce<span style={{ color: theme.palette.primary.main }}>IQ</span>
-              </Typography>
-              <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block', fontSize: '0.7rem' }}>
-                Enterprise Operations
-              </Typography>
-            </Box>
+            <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.15rem', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+              Stack<span style={{ color: theme.palette.primary.main }}>ly</span>
+            </Typography>
           )}
         </Box>
 
@@ -162,20 +158,17 @@ export const Sidebar: React.FC = () => {
                   py: 1.1,
                   justifyContent: !sidebarOpen && !isMobile ? 'center' : 'flex-start',
                   backgroundColor: isActive
-                    ? theme.palette.mode === 'dark'
-                      ? 'rgba(99, 102, 241, 0.16)'
-                      : 'rgba(79, 70, 229, 0.08)'
+                    ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08)
                     : 'transparent',
                   color: isActive
                     ? theme.palette.primary.main
                     : theme.palette.text.primary,
                   fontWeight: isActive ? 600 : 500,
+                  borderLeft: isActive ? `3px solid ${theme.palette.primary.main}` : '3px solid transparent',
                   transition: 'all 0.2s ease',
                   '&:hover': {
                     backgroundColor: isActive
-                      ? theme.palette.mode === 'dark'
-                        ? 'rgba(99, 102, 241, 0.22)'
-                        : 'rgba(79, 70, 229, 0.12)'
+                      ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.22 : 0.12)
                       : theme.palette.action.hover,
                   },
                 }}
@@ -261,10 +254,19 @@ export const Sidebar: React.FC = () => {
       >
         <Box sx={{ position: 'relative' }}>
           <Avatar
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
             alt="Sridhika"
-            sx={{ width: 36, height: 36, border: `2px solid ${theme.palette.primary.main}` }}
-          />
+            sx={{
+              width: 36,
+              height: 36,
+              fontSize: '0.9rem',
+              fontWeight: 700,
+              backgroundColor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.12),
+              color: theme.palette.primary.main,
+              border: `2px solid ${theme.palette.primary.main}`,
+            }}
+          >
+            S
+          </Avatar>
           <FiberManualRecordIcon
             sx={{
               position: 'absolute',

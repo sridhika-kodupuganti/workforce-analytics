@@ -25,6 +25,7 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
+  alpha,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -45,6 +46,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
   const {
     filteredEmployees,
     setSelectedEmployee,
+    setAttendanceModalEmployee,
     filters,
     setFilter,
     resetFilters,
@@ -119,9 +121,9 @@ export const EmployeeDirectoryTable: React.FC = () => {
         };
       case 'Overtime':
         return {
-          bg: isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.1)',
-          text: '#8B5CF6',
-          border: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.25)',
+          bg: isDark ? 'rgba(192, 132, 252, 0.15)' : 'rgba(124, 58, 237, 0.1)',
+          text: isDark ? '#C084FC' : '#7C3AED',
+          border: isDark ? 'rgba(192, 132, 252, 0.3)' : 'rgba(124, 58, 237, 0.25)',
         };
       case 'On Leave':
         return {
@@ -161,7 +163,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
       sx={{
         borderRadius: 3,
         border: `1px solid ${theme.palette.divider}`,
-        backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.95)',
+        backgroundColor: isDark ? alpha(theme.palette.background.paper, 0.85) : alpha(theme.palette.background.paper, 0.95),
         backdropFilter: 'blur(12px)',
         boxShadow: isDark ? '0 10px 30px rgba(0, 0, 0, 0.3)' : '0 10px 25px rgba(0, 0, 0, 0.03)',
         mb: 3,
@@ -206,7 +208,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
                   minWidth: { xs: 200, sm: 260 },
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 2,
-                    backgroundColor: isDark ? 'rgba(15, 23, 42, 0.6)' : '#F8FAFC',
+                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : alpha(theme.palette.primary.main, 0.03),
                   },
                 }}
               />
@@ -233,7 +235,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
           <Table stickyHeader aria-label="workforce directory table">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }}>
+                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? theme.palette.background.paper : alpha(theme.palette.primary.main, 0.03) }}>
                   <TableSortLabel
                     active={sortField === 'name'}
                     direction={sortField === 'name' ? sortOrder : 'asc'}
@@ -242,7 +244,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
                     Employee
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }}>
+                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? theme.palette.background.paper : alpha(theme.palette.primary.main, 0.03) }}>
                   <TableSortLabel
                     active={sortField === 'role'}
                     direction={sortField === 'role' ? sortOrder : 'asc'}
@@ -251,7 +253,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
                     Role & Title
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }}>
+                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? theme.palette.background.paper : alpha(theme.palette.primary.main, 0.03) }}>
                   <TableSortLabel
                     active={sortField === 'department'}
                     direction={sortField === 'department' ? sortOrder : 'asc'}
@@ -260,7 +262,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
                     Department
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }}>
+                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? theme.palette.background.paper : alpha(theme.palette.primary.main, 0.03) }}>
                   <TableSortLabel
                     active={sortField === 'location'}
                     direction={sortField === 'location' ? sortOrder : 'asc'}
@@ -269,10 +271,10 @@ export const EmployeeDirectoryTable: React.FC = () => {
                     Hub / Location
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }}>
+                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? theme.palette.background.paper : alpha(theme.palette.primary.main, 0.03) }}>
                   Work Model
                 </TableCell>
-                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }}>
+                <TableCell sx={{ fontWeight: 700, backgroundColor: isDark ? theme.palette.background.paper : alpha(theme.palette.primary.main, 0.03) }}>
                   <TableSortLabel
                     active={sortField === 'status'}
                     direction={sortField === 'status' ? sortOrder : 'asc'}
@@ -281,7 +283,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
                     Status
                   </TableSortLabel>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }}>
+                <TableCell align="right" sx={{ fontWeight: 700, backgroundColor: isDark ? theme.palette.background.paper : alpha(theme.palette.primary.main, 0.03) }}>
                   <TableSortLabel
                     active={sortField === 'hoursWorkedToday'}
                     direction={sortField === 'hoursWorkedToday' ? sortOrder : 'asc'}
@@ -290,7 +292,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
                     Hours Today
                   </TableSortLabel>
                 </TableCell>
-                <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }}>
+                <TableCell align="center" sx={{ fontWeight: 700, backgroundColor: isDark ? theme.palette.background.paper : alpha(theme.palette.primary.main, 0.03) }}>
                   Actions
                 </TableCell>
               </TableRow>
@@ -323,7 +325,7 @@ export const EmployeeDirectoryTable: React.FC = () => {
                         cursor: 'pointer',
                         transition: 'background-color 0.15s ease',
                         '&:hover': {
-                          backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.02)',
+                          backgroundColor: alpha(theme.palette.primary.main, isDark ? 0.08 : 0.04),
                         },
                       }}
                     >
@@ -434,6 +436,23 @@ export const EmployeeDirectoryTable: React.FC = () => {
                             </IconButton>
                           </Tooltip>
 
+                          <Tooltip title="Update Attendance Record">
+                            <IconButton
+                              size="small"
+                              aria-label={`Update attendance for ${emp.name}`}
+                              onClick={() => setAttendanceModalEmployee(emp)}
+                              sx={{
+                                color: theme.palette.primary.main,
+                                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : alpha(theme.palette.primary.main, 0.08),
+                                '&:hover': {
+                                  backgroundColor: alpha(theme.palette.primary.main, isDark ? 0.2 : 0.15),
+                                },
+                              }}
+                            >
+                              <AccessTimeIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+
                           <Tooltip title="Quick Actions">
                             <IconButton size="small" onClick={(e) => openMenu(e, emp)}>
                               <MoreVertIcon fontSize="small" />
@@ -486,6 +505,18 @@ export const EmployeeDirectoryTable: React.FC = () => {
         </MenuItem>
 
         <MenuItem
+          onClick={() => {
+            if (activeMenuEmployee) setAttendanceModalEmployee(activeMenuEmployee);
+            closeMenu();
+          }}
+        >
+          <ListItemIcon>
+            <AccessTimeIcon fontSize="small" color="primary" />
+          </ListItemIcon>
+          <ListItemText>Change Attendance & Shift...</ListItemText>
+        </MenuItem>
+
+        <MenuItem
           onClick={async () => {
             if (activeMenuEmployee) {
               await updateStatus(activeMenuEmployee.id, 'Present');
@@ -497,6 +528,20 @@ export const EmployeeDirectoryTable: React.FC = () => {
             <CheckCircleIcon fontSize="small" color="success" />
           </ListItemIcon>
           <ListItemText>Mark as Clocked In (Present)</ListItemText>
+        </MenuItem>
+
+        <MenuItem
+          onClick={async () => {
+            if (activeMenuEmployee) {
+              await updateStatus(activeMenuEmployee.id, 'Remote');
+            }
+            closeMenu();
+          }}
+        >
+          <ListItemIcon>
+            <LaptopMacIcon fontSize="small" color="info" />
+          </ListItemIcon>
+          <ListItemText>Mark as Remote Active</ListItemText>
         </MenuItem>
 
         <MenuItem

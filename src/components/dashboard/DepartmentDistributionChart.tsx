@@ -66,7 +66,7 @@ const DepartmentTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: s
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-            <FiberManualRecordIcon sx={{ fontSize: 10, color: '#10B981' }} />
+            <FiberManualRecordIcon sx={{ fontSize: 10, color: theme.palette.primary.main }} />
             <Typography variant="caption" sx={{ color: '#CBD5E1' }}>
               Present (Office):
             </Typography>
@@ -78,7 +78,7 @@ const DepartmentTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: s
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-            <FiberManualRecordIcon sx={{ fontSize: 10, color: '#0EA5E9' }} />
+            <FiberManualRecordIcon sx={{ fontSize: 10, color: theme.palette.secondary.main }} />
             <Typography variant="caption" sx={{ color: '#CBD5E1' }}>
               Remote Active:
             </Typography>
@@ -90,7 +90,7 @@ const DepartmentTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: s
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-            <FiberManualRecordIcon sx={{ fontSize: 10, color: '#F59E0B' }} />
+            <FiberManualRecordIcon sx={{ fontSize: 10, color: theme.palette.warning.main }} />
             <Typography variant="caption" sx={{ color: '#CBD5E1' }}>
               On Leave:
             </Typography>
@@ -246,22 +246,22 @@ export const DepartmentDistributionChart: React.FC = () => {
                 dataKey="presentCount"
                 name="Present (Office)"
                 stackId="dept"
-                fill="#4F46E5"
+                fill={theme.palette.primary.main}
                 radius={[0, 0, 0, 0]}
               />
               <Bar
                 dataKey="remoteCount"
                 name="Remote Active"
                 stackId="dept"
-                fill="#0EA5E9"
+                fill={theme.palette.secondary.main}
                 radius={[0, 0, 0, 0]}
               />
               <Bar
                 dataKey="onLeaveCount"
                 name="On Leave"
                 stackId="dept"
-                fill="#F59E0B"
-                radius={[4, 4, 0, 0]}
+                fill={theme.palette.warning.main}
+                radius={[6, 6, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>

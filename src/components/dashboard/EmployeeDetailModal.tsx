@@ -12,6 +12,7 @@ import {
   Grid,
   useTheme,
   IconButton,
+  alpha,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import EmailIcon from '@mui/icons-material/Email';
@@ -21,11 +22,15 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import WorkIcon from '@mui/icons-material/Work';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
+import LaptopMacIcon from '@mui/icons-material/LaptopMac';
+import MoreTimeIcon from '@mui/icons-material/MoreTime';
 import { useWorkforce } from '../../context/useWorkforce.ts';
 
 export const EmployeeDetailModal: React.FC = () => {
   const theme = useTheme();
-  const { selectedEmployee, setSelectedEmployee, updateStatus } = useWorkforce();
+  const { selectedEmployee, setSelectedEmployee, updateStatus, setAttendanceModalEmployee } = useWorkforce();
 
   if (!selectedEmployee) return null;
 
@@ -67,10 +72,23 @@ export const EmployeeDetailModal: React.FC = () => {
         {/* Header Hero */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
           <Avatar
-            src={selectedEmployee.avatar}
             alt={selectedEmployee.name}
-            sx={{ width: 68, height: 68, border: `3px solid ${theme.palette.primary.main}` }}
-          />
+            sx={{
+              width: 64,
+              height: 64,
+              fontSize: '1.5rem',
+              fontWeight: 800,
+              backgroundColor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.22 : 0.12),
+              color: theme.palette.primary.main,
+              border: `3px solid ${theme.palette.primary.main}`,
+            }}
+          >
+            {selectedEmployee.name
+              .split(' ')
+              .map((n) => n[0])
+              .join('')
+              .slice(0, 2)}
+          </Avatar>
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
               <Typography variant="h5" sx={{ fontWeight: 800, fontSize: '1.25rem' }}>
@@ -212,6 +230,89 @@ export const EmployeeDetailModal: React.FC = () => {
             </Box>
           </Grid>
         </Grid>
+
+        {/* Quick Attendance Change Bar */}
+        <Box
+          sx={{
+            mt: 3,
+            p: 2,
+            borderRadius: 2.5,
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.04)' : alpha(theme.palette.primary.main, 0.04),
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.8 }}>
+              <ScheduleIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
+              Change Attendance Status
+            </Typography>
+            <Button
+              size="small"
+              variant="text"
+              onClick={() => {
+                const emp = selectedEmployee;
+                setSelectedEmployee(null);
+                setAttendanceModalEmployee(emp);
+              }}
+              sx={{ fontSize: '0.75rem', textTransform: 'none' }}
+            >
+              Open Full Editor
+            </Button>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            <Button
+              size="small"
+              variant={selectedEmployee.status === 'Present' ? 'contained' : 'outlined'}
+              color="success"
+              onClick={() => updateStatus(selectedEmployee.id, 'Present')}
+              startIcon={<CheckCircleIcon />}
+              sx={{ textTransform: 'none', borderRadius: 2 }}
+            >
+              Present
+            </Button>
+            <Button
+              size="small"
+              variant={selectedEmployee.status === 'Remote' ? 'contained' : 'outlined'}
+              color="info"
+              onClick={() => updateStatus(selectedEmployee.id, 'Remote')}
+              startIcon={<LaptopMacIcon />}
+              sx={{ textTransform: 'none', borderRadius: 2 }}
+            >
+              Remote
+            </Button>
+            <Button
+              size="small"
+              variant={selectedEmployee.status === 'On Leave' ? 'contained' : 'outlined'}
+              color="warning"
+              onClick={() => updateStatus(selectedEmployee.id, 'On Leave')}
+              startIcon={<FlightTakeoffIcon />}
+              sx={{ textTransform: 'none', borderRadius: 2 }}
+            >
+              On Leave
+            </Button>
+            <Button
+              size="small"
+              variant={selectedEmployee.status === 'Absent' ? 'contained' : 'outlined'}
+              color="error"
+              onClick={() => updateStatus(selectedEmployee.id, 'Absent')}
+              startIcon={<DoDisturbIcon />}
+              sx={{ textTransform: 'none', borderRadius: 2 }}
+            >
+              Absent
+            </Button>
+            <Button
+              size="small"
+              variant={selectedEmployee.status === 'Overtime' ? 'contained' : 'outlined'}
+              color="secondary"
+              onClick={() => updateStatus(selectedEmployee.id, 'Overtime')}
+              startIcon={<MoreTimeIcon />}
+              sx={{ textTransform: 'none', borderRadius: 2 }}
+            >
+              Overtime
+            </Button>
+          </Box>
+        </Box>
       </DialogContent>
 
       <DialogActions sx={{ px: 2.5, py: 1.5 }}>
